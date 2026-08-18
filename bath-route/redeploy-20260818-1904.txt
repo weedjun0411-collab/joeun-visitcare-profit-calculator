@@ -1,0 +1,2 @@
+Force GitHub Pages redeploy for Saturday-enabled bath route planner.
+Build: 2026-08-18 19:04 KST
