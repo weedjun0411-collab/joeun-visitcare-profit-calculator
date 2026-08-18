@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>조은 수익계산기</title>
-<link rel="stylesheet" href="style.css?v=202608181658" />
+<link rel="stylesheet" href="style.css?v=202608181735" />
 </head>
 <body>
 <div class="wrap">
@@ -74,17 +74,19 @@
 
   <main id="bathPanel" class="hidden">
     <section class="card">
-      <div class="card-head"><h2>1. 이번 달 목욕 실적</h2><span class="badge">2026 수가 × 건수</span></div>
-      <div class="bath-type"><div class="bath-type-title">차량 이용 · 차량 내 목욕</div><div class="grid3"><div class="field"><label>1회 수가</label><div class="input-wrap has-suffix"><input id="bathFee1" type="number" min="0" value="88990"><span class="suffix">원</span></div></div><div class="field"><label>건수</label><div class="input-wrap has-suffix"><input id="bathCases1" type="number" min="0" value="0"><span class="suffix">건</span></div></div><div class="field"><label>청구금액</label><div class="readbox" id="bathRevenue1">0원</div></div></div></div>
-      <div class="bath-type"><div class="bath-type-title">차량 이용 · 가정 내 목욕</div><div class="grid3"><div class="field"><label>1회 수가</label><div class="input-wrap has-suffix"><input id="bathFee2" type="number" min="0" value="80230"><span class="suffix">원</span></div></div><div class="field"><label>건수</label><div class="input-wrap has-suffix"><input id="bathCases2" type="number" min="0" value="0"><span class="suffix">건</span></div></div><div class="field"><label>청구금액</label><div class="readbox" id="bathRevenue2">0원</div></div></div></div>
-      <div class="bath-type"><div class="bath-type-title">차량 미이용</div><div class="grid3"><div class="field"><label>1회 수가</label><div class="input-wrap has-suffix"><input id="bathFee3" type="number" min="0" value="50100"><span class="suffix">원</span></div></div><div class="field"><label>건수</label><div class="input-wrap has-suffix"><input id="bathCases3" type="number" min="0" value="0"><span class="suffix">건</span></div></div><div class="field"><label>청구금액</label><div class="readbox" id="bathRevenue3">0원</div></div></div></div>
-      <div class="note">60분 이상 제공 기준 기본 수가입니다. 40분 이상 60분 미만 등 별도 산정 상황은 현재 계산기에서 자동 반영하지 않습니다.</div>
+      <div class="card-head"><h2>1. 이번 달 목욕 케이스</h2><span class="badge">유형 · 40분/60분 · 건수</span></div>
+      <div id="bathCasesRows"></div>
+      <button class="add-client" id="addBathCaseBtn" type="button">+ 목욕 케이스 추가</button>
+      <div class="note">40분은 40분 이상 60분 미만 기준으로 60분 수가의 80%를 자동 적용합니다.</div>
     </section>
+
     <section class="card">
-      <div class="card-head"><h2>2. 목욕 요양보호사</h2><span class="badge">건수 기반 급여</span></div>
-      <div id="bathStaff"></div><button class="add-client" id="addBathStaffBtn" type="button">+ 선생님 추가</button>
-      <div class="note">각 선생님이 실제 담당한 유형별 건수를 입력하면 인정시간 × 통상시급으로 급여를 계산합니다. 건당 인정시간은 직접 수정할 수 있습니다.</div>
+      <div class="card-head"><h2>2. 목욕 요양보호사</h2><span class="badge">40분/60분 건수 기반 급여</span></div>
+      <div id="bathStaff"></div>
+      <button class="add-client" id="addBathStaffBtn" type="button">+ 선생님 추가</button>
+      <div class="note">선생님별 40분·60분 담당 건수로 근무시간을 계산합니다. 운전수당은 운전 건수 × 건당 운전수당으로 급여에 합산합니다.</div>
     </section>
+
     <section class="card">
       <div class="card-head"><h2>3. 목욕차량 · 운영비</h2><span class="badge">1대 기본값 자동입력</span></div>
       <div class="grid2"><div class="field"><label>목욕차량 수</label><div class="input-wrap has-suffix"><input id="bathVehicleCount" type="number" min="1" step="1" value="1"><span class="suffix">대</span></div></div><div class="field"><label>기본값 적용</label><button class="preset-btn" id="bathVehiclePresetBtn" type="button">1대 기본값으로 초기화</button></div></div>
@@ -105,8 +107,9 @@
         <div class="field"><label>공통관리비 배부 <span class="optional">(선택)</span></label><div class="input-wrap has-suffix"><input class="bath-cost" id="bathCommonCost" type="number" min="0" value="0"><span class="suffix">원</span></div></div>
       </div>
       <div class="summary-line"><span>월 차량·운영비 합계</span><strong id="bathOperatingCost">0원</strong></div>
-      <div class="note">차량 기본값은 수익성 계산을 위한 예상 프리셋입니다. 실제 보험료·세금·정비비·유류비에 맞게 수정하세요. 차량 수를 바꾸면 차량 관련 기본값이 대수에 맞춰 다시 적용됩니다.</div>
+      <div class="note">차량 기본값은 수익성 계산용 예상 프리셋입니다. 실제 지출에 맞게 수정하세요.</div>
     </section>
+
     <section class="card results">
       <h2>방문목욕 전체 계산 결과</h2>
       <div class="result-grid"><div class="result-item"><div class="k">총 청구금액</div><div class="v" id="bathRRevenue">0원</div></div><div class="result-item"><div class="k">선생님 총 급여</div><div class="v" id="bathRSalary">0원</div></div><div class="result-item"><div class="k">보험 + 퇴직금</div><div class="v" id="bathRLaborExtra">0원</div></div><div class="result-item"><div class="k">차량 · 운영비</div><div class="v" id="bathROperating">0원</div></div></div>
@@ -116,6 +119,6 @@
     <div class="btns"><button class="btn secondary" id="bathResetBtn" type="button">초기화</button><button class="btn primary" id="bathSampleBtn" type="button">예시값 넣기</button></div>
   </main>
 </div>
-<script src="app.js?v=202608181658"></script>
+<script src="app.js?v=202608181735"></script>
 </body>
 </html>
