@@ -5,21 +5,297 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>조은 방문요양 수익계산기</title>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;--primary:#2563eb;--primary-soft:#eff6ff;--good:#0f766e;--bad:#b91c1c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Pretendard","Noto Sans KR",sans-serif}.wrap{max-width:760px;margin:0 auto;padding:18px 14px 48px}.header{padding:8px 2px 18px}h1{font-size:26px;margin:0 0 6px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px;line-height:1.5}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(15,23,42,.035)}.card h2{font-size:18px;margin:0 0 14px;letter-spacing:-.03em}.segment{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.segment button{border:1px solid var(--line);background:#fff;padding:11px 8px;border-radius:11px;font-weight:700;cursor:pointer}.segment button.active{background:var(--primary);border-color:var(--primary);color:#fff}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.input-wrap{position:relative}input,select{width:100%;border:1px solid #d8dde6;background:#fff;border-radius:11px;padding:12px 13px;font-size:16px;outline:none}input:focus,select:focus{border-color:#93b4ff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}.has-suffix input{padding-right:48px}.row{display:grid;grid-template-columns:1.25fr .8fr auto;gap:8px;align-items:end;margin-bottom:8px}.row .remove{height:46px;width:46px;border:1px solid var(--line);background:#fff;border-radius:11px;font-size:18px;cursor:pointer}.add{width:100%;border:1px dashed #b9c7df;background:#f8fbff;color:#1d4ed8;border-radius:11px;padding:11px;font-weight:800;cursor:pointer;margin-top:4px}.summary-line{display:flex;justify-content:space-between;gap:12px;padding-top:10px;margin-top:8px;border-top:1px solid var(--line);font-size:14px}.summary-line strong{font-size:16px}.checklist{display:grid;gap:9px}.ins{display:grid;grid-template-columns:auto 1fr 105px;gap:9px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 11px}.ins input[type=checkbox]{width:19px;height:19px}.ins .name{font-weight:700;font-size:14px}.ins .rate{position:relative}.ins .rate input{padding:9px 28px 9px 9px;font-size:14px}.ins .rate span{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px}.note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:9px}.results{background:#0f172a;color:#fff;border:none}.results h2{color:#fff}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result-item{background:rgba(255,255,255,.08);border-radius:13px;padding:12px}.result-item .k{font-size:12px;color:#cbd5e1;margin-bottom:4px}.result-item .v{font-size:19px;font-weight:800;letter-spacing:-.02em}.result-main{margin-top:12px;background:#fff;color:#0f172a;border-radius:15px;padding:16px}.result-main .k{font-size:13px;color:#64748b}.result-main .v{font-size:30px;font-weight:900;letter-spacing:-.04em;margin-top:3px}.result-main .m{font-size:13px;margin-top:5px;color:#475569}.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e5e7eb;color:#111827}.btn.primary{background:var(--primary);color:#fff}.hidden{display:none!important}@media (max-width:520px){.grid2{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr 1fr}h1{font-size:23px}.card{padding:15px}}
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#18212f;--muted:#6b7280;--line:#e5e7eb;
+  --primary:#2563eb;--primary-soft:#eff6ff;--good:#0f766e;--bad:#b91c1c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Pretendard","Noto Sans KR",sans-serif}
+.wrap{max-width:800px;margin:0 auto;padding:18px 14px 48px}
+.header{padding:8px 2px 18px}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px;line-height:1.55}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(15,23,42,.035)}
+.card h2{font-size:18px;margin:0 0 14px;letter-spacing:-.03em}
+.caregiver-top{display:grid;grid-template-columns:1fr 180px;gap:12px;align-items:end}
+.client-card{background:#fff;border:1px solid #dbe2ec;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(15,23,42,.03)}
+.client-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.client-title{font-size:18px;font-weight:900;letter-spacing:-.03em}.client-title span{color:var(--primary)}
+.delete-client{border:1px solid #fecaca;background:#fff;color:#b91c1c;border-radius:10px;padding:8px 11px;font-weight:800;cursor:pointer}
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.segment button{border:1px solid var(--line);background:#fff;padding:11px 8px;border-radius:11px;font-weight:700;cursor:pointer}
+.segment button.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.input-wrap{position:relative}
+input,select{width:100%;border:1px solid #d8dde6;background:#fff;border-radius:11px;padding:12px 13px;font-size:16px;outline:none}
+input:focus,select:focus{border-color:#93b4ff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}.has-suffix input{padding-right:48px}
+.schedule-row{display:grid;grid-template-columns:1.25fr .8fr auto;gap:8px;align-items:end;margin-bottom:8px}
+.schedule-row .remove{height:46px;width:46px;border:1px solid var(--line);background:#fff;border-radius:11px;font-size:18px;cursor:pointer}
+.add{width:100%;border:1px dashed #b9c7df;background:#f8fbff;color:#1d4ed8;border-radius:11px;padding:11px;font-weight:800;cursor:pointer;margin-top:4px}
+.add-client{width:100%;border:0;background:var(--primary);color:#fff;border-radius:14px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;margin:2px 0 14px}
+.divider{height:1px;background:var(--line);margin:16px 0}
+.section-label{font-size:14px;font-weight:900;margin:0 0 10px;color:#334155}
+.summary-line{display:flex;justify-content:space-between;gap:12px;padding-top:10px;margin-top:8px;border-top:1px solid var(--line);font-size:14px}.summary-line strong{font-size:16px;text-align:right}
+.client-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.client-summary .mini{background:#f8fafc;border:1px solid #e9eef5;border-radius:12px;padding:11px}.mini .k{font-size:11px;color:var(--muted);margin-bottom:4px}.mini .v{font-size:15px;font-weight:900}
+.checklist{display:grid;gap:9px}.ins{display:grid;grid-template-columns:auto 1fr 105px;gap:9px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 11px}.ins input[type=checkbox]{width:19px;height:19px}.ins .name{font-weight:700;font-size:14px}.ins .rate{position:relative}.ins .rate input{padding:9px 28px 9px 9px;font-size:14px}.ins .rate span{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px}
+.note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:9px}.hidden{display:none!important}
+.results{background:#0f172a;color:#fff;border:none}.results h2{color:#fff}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result-item{background:rgba(255,255,255,.08);border-radius:13px;padding:12px}.result-item .k{font-size:12px;color:#cbd5e1;margin-bottom:4px}.result-item .v{font-size:19px;font-weight:800;letter-spacing:-.02em}.result-main{margin-top:12px;background:#fff;color:#0f172a;border-radius:15px;padding:16px}.result-main .k{font-size:13px;color:#64748b}.result-main .v{font-size:30px;font-weight:900;letter-spacing:-.04em;margin-top:3px}.result-main .m{font-size:13px;margin-top:5px;color:#475569}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px;font-weight:800;font-size:15px;cursor:pointer}.btn.secondary{background:#e5e7eb;color:#111827}.btn.primary{background:var(--primary);color:#fff}
+@media (max-width:560px){.grid2,.caregiver-top{grid-template-columns:1fr}.client-summary{grid-template-columns:1fr 1fr}.result-grid{grid-template-columns:1fr 1fr}h1{font-size:23px}.card,.client-card{padding:15px}.schedule-row{grid-template-columns:1fr .72fr auto}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="header"><h1>조은 방문요양 수익계산기</h1><div class="sub">수급자 1명 기준 · 예상 청구액에서 요양보호사 인건비, 센터 부담 4대보험, 퇴직금 적립액을 차감합니다.</div></div>
-  <section class="card"><h2>1. 청구금액</h2><div class="segment"><button id="autoBtn" class="active" type="button">시간 × 횟수 자동계산</button><button id="manualBtn" type="button">청구금액 직접입력</button></div><div id="autoArea"><div id="rows"></div><button class="add" id="addRow" type="button">+ 일정 추가</button><div class="summary-line"><span>총 근무시간</span><strong id="autoHours">0시간</strong></div><div class="summary-line"><span>예상 총 급여비용</span><strong id="autoRevenue">0원</strong></div><div class="note">2026년 방문요양 시간별 수가를 적용합니다. 공단부담금 + 본인부담금을 합친 총 급여비용 기준입니다.</div></div><div id="manualArea" class="hidden"><div class="grid2"><div class="field"><label>총 청구금액</label><div class="input-wrap has-suffix"><input id="manualRevenue" type="number" min="0" value="0"><span class="suffix">원</span></div></div><div class="field"><label>총 근무시간</label><div class="input-wrap has-suffix"><input id="manualHours" type="number" min="0" step="0.1" value="0"><span class="suffix">시간</span></div></div></div></div></section>
-  <section class="card"><h2>2. 요양보호사 급여</h2><div class="grid2"><div class="field"><label>통상시급</label><div class="input-wrap has-suffix"><input id="hourly" type="number" min="0" value="13500"><span class="suffix">원</span></div></div><div class="field"><label>교통비</label><div class="input-wrap has-suffix"><input id="transport" type="number" min="0" value="0"><span class="suffix">원</span></div></div><div class="field"><label>식대</label><div class="input-wrap has-suffix"><input id="meal" type="number" min="0" value="0"><span class="suffix">원</span></div></div><div class="field"><label>기타 추가금</label><div class="input-wrap has-suffix"><input id="extra" type="number" min="0" value="0"><span class="suffix">원</span></div></div></div><div class="summary-line"><span>요양보호사 총 급여</span><strong id="salaryPreview">0원</strong></div></section>
-  <section class="card"><h2>3. 센터 부담 4대보험</h2><div class="checklist"><div class="ins"><input id="pensionChk" type="checkbox" checked><div class="name">국민연금</div><div class="rate"><input id="pensionRate" type="number" step="0.0001" value="4.75"><span>%</span></div></div><div class="ins"><input id="healthChk" type="checkbox" checked><div class="name">건강보험 + 장기요양보험</div><div class="rate"><input id="healthRate" type="number" step="0.0001" value="4.0674"><span>%</span></div></div><div class="ins"><input id="employmentChk" type="checkbox" checked><div class="name">고용보험</div><div class="rate"><input id="employmentRate" type="number" step="0.0001" value="0.9"><span>%</span></div></div><div class="ins"><input id="accidentChk" type="checkbox" checked><div class="name">산재보험</div><div class="rate"><input id="accidentRate" type="number" step="0.0001" value="0.7"><span>%</span></div></div></div><div class="note">요율은 기관 실제 적용값에 맞게 수정할 수 있습니다. 고용보험은 사업주 추가 부담분, 산재보험은 사업장 적용요율에 따라 달라질 수 있습니다.</div><div class="summary-line"><span>센터 부담 4대보험 예상액</span><strong id="insurancePreview">0원</strong></div></section>
-  <section class="card"><h2>4. 퇴직금</h2><div class="ins"><input id="severanceChk" type="checkbox" checked><div class="name">월 급여의 1/12 적립</div><div class="rate"><input id="severanceRate" type="number" step="0.01" value="8.33"><span>%</span></div></div><div class="note">단순 수익성 계산용 예상 적립액입니다. 실제 법정 퇴직금 산정과는 차이가 날 수 있습니다.</div><div class="summary-line"><span>퇴직금 예상 적립액</span><strong id="severancePreview">0원</strong></div></section>
-  <section class="card results"><h2>계산 결과</h2><div class="result-grid"><div class="result-item"><div class="k">총 급여비용</div><div class="v" id="rRevenue">0원</div></div><div class="result-item"><div class="k">요양보호사 급여</div><div class="v" id="rSalary">0원</div></div><div class="result-item"><div class="k">4대보험 센터부담</div><div class="v" id="rInsurance">0원</div></div><div class="result-item"><div class="k">퇴직금 적립</div><div class="v" id="rSeverance">0원</div></div></div><div class="result-main"><div class="k">센터 예상 잔액</div><div class="v" id="rProfit">0원</div><div class="m">마진율 <strong id="rMargin">0.0%</strong></div></div></section>
-  <div class="btns"><button class="btn secondary" id="resetBtn" type="button">초기화</button><button class="btn primary" id="sampleBtn" type="button">예시값 넣기</button></div>
+  <div class="header">
+    <h1>조은 방문요양 수익계산기</h1>
+    <div class="sub">요양보호사 1명 기준 · 담당 어르신별 청구금액과 급여조건을 각각 입력하고, 전체 급여를 합산한 뒤 센터 부담 4대보험과 퇴직금을 계산합니다.</div>
+  </div>
+
+  <section class="card">
+    <h2>요양보호사</h2>
+    <div class="caregiver-top">
+      <div class="field" style="margin:0">
+        <label>요양보호사 이름 <span style="font-weight:500;color:#94a3b8">(선택)</span></label>
+        <input id="caregiverName" type="text" placeholder="예: 김영희">
+      </div>
+      <div class="field" style="margin:0">
+        <label>담당 어르신 수</label>
+        <div class="input-wrap has-suffix"><input id="clientCount" type="text" value="1" readonly><span class="suffix">명</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="clients"></div>
+  <button class="add-client" id="addClientBtn" type="button">+ 어르신 추가</button>
+
+  <section class="card">
+    <h2>센터 부담 4대보험</h2>
+    <div class="note" style="margin:0 0 12px">위 모든 어르신의 급여를 합친 <strong>요양보호사 1명의 총 급여</strong>를 기준으로 한 번 계산합니다.</div>
+    <div class="checklist">
+      <div class="ins"><input id="pensionChk" type="checkbox" checked><div class="name">국민연금</div><div class="rate"><input id="pensionRate" type="number" step="0.0001" value="4.75"><span>%</span></div></div>
+      <div class="ins"><input id="healthChk" type="checkbox" checked><div class="name">건강보험 + 장기요양보험</div><div class="rate"><input id="healthRate" type="number" step="0.0001" value="4.0674"><span>%</span></div></div>
+      <div class="ins"><input id="employmentChk" type="checkbox" checked><div class="name">고용보험</div><div class="rate"><input id="employmentRate" type="number" step="0.0001" value="0.9"><span>%</span></div></div>
+      <div class="ins"><input id="accidentChk" type="checkbox" checked><div class="name">산재보험</div><div class="rate"><input id="accidentRate" type="number" step="0.0001" value="0.7"><span>%</span></div></div>
+    </div>
+    <div class="note">요율은 기관 실제 적용값에 맞게 수정할 수 있습니다.</div>
+    <div class="summary-line"><span>요양보호사 총 급여</span><strong id="salaryPreview">0원</strong></div>
+    <div class="summary-line"><span>센터 부담 4대보험 예상액</span><strong id="insurancePreview">0원</strong></div>
+  </section>
+
+  <section class="card">
+    <h2>퇴직금</h2>
+    <div class="ins"><input id="severanceChk" type="checkbox" checked><div class="name">총 월 급여의 1/12 적립</div><div class="rate"><input id="severanceRate" type="number" step="0.01" value="8.33"><span>%</span></div></div>
+    <div class="note">단순 수익성 계산용 예상 적립액입니다. 실제 법정 퇴직금 산정과는 차이가 날 수 있습니다.</div>
+    <div class="summary-line"><span>퇴직금 예상 적립액</span><strong id="severancePreview">0원</strong></div>
+  </section>
+
+  <section class="card results">
+    <h2>전체 계산 결과</h2>
+    <div class="result-grid">
+      <div class="result-item"><div class="k">전체 청구금액</div><div class="v" id="rRevenue">0원</div></div>
+      <div class="result-item"><div class="k">요양보호사 총 급여</div><div class="v" id="rSalary">0원</div></div>
+      <div class="result-item"><div class="k">4대보험 센터부담</div><div class="v" id="rInsurance">0원</div></div>
+      <div class="result-item"><div class="k">퇴직금 적립</div><div class="v" id="rSeverance">0원</div></div>
+    </div>
+    <div class="result-main">
+      <div class="k">센터 예상 잔액</div>
+      <div class="v" id="rProfit">0원</div>
+      <div class="m">전체 마진율 <strong id="rMargin">0.0%</strong></div>
+    </div>
+  </section>
+
+  <div class="btns">
+    <button class="btn secondary" id="resetBtn" type="button">초기화</button>
+    <button class="btn primary" id="sampleBtn" type="button">예시값 넣기</button>
+  </div>
 </div>
+
 <script>
-const fees={30:17450,60:25320,90:34120,120:43430,150:50640,180:57020,210:63530,240:70080};let mode='auto';const $=id=>document.getElementById(id);const won=n=>Math.round(Number(n)||0).toLocaleString('ko-KR')+'원';const num=id=>Number($(id).value)||0;function addRow(min=180,count=20){const div=document.createElement('div');div.className='row';div.innerHTML=`<div class="field" style="margin:0"><label>방문시간</label><select class="mins">${Object.keys(fees).map(m=>`<option value="${m}" ${Number(m)===min?'selected':''}>${m}분 · ${fees[m].toLocaleString()}원</option>`).join('')}</select></div><div class="field" style="margin:0"><label>횟수</label><div class="input-wrap has-suffix"><input class="count" type="number" min="0" value="${count}"><span class="suffix">회</span></div></div><button class="remove" type="button" aria-label="삭제">×</button>`;div.querySelectorAll('select,input').forEach(el=>el.addEventListener('input',calc));div.querySelector('.remove').addEventListener('click',()=>{div.remove();calc();});$('rows').appendChild(div);calc()}function getAuto(){let revenue=0,minutes=0;document.querySelectorAll('#rows .row').forEach(r=>{const m=Number(r.querySelector('.mins').value)||0;const c=Number(r.querySelector('.count').value)||0;revenue+=(fees[m]||0)*c;minutes+=m*c});return{revenue,hours:minutes/60}}function insuranceAmount(base){const defs=[['pensionChk','pensionRate'],['healthChk','healthRate'],['employmentChk','employmentRate'],['accidentChk','accidentRate']];return defs.reduce((sum,[c,r])=>sum+($(c).checked?base*(num(r)/100):0),0)}function calc(){const a=getAuto();$('autoHours').textContent=(Math.round(a.hours*10)/10).toLocaleString()+'시간';$('autoRevenue').textContent=won(a.revenue);const revenue=mode==='auto'?a.revenue:num('manualRevenue');const hours=mode==='auto'?a.hours:num('manualHours');const salary=hours*num('hourly')+num('transport')+num('meal')+num('extra');const insurance=insuranceAmount(salary);const severance=$('severanceChk').checked?salary*(num('severanceRate')/100):0;const profit=revenue-salary-insurance-severance;const margin=revenue>0?(profit/revenue*100):0;$('salaryPreview').textContent=won(salary);$('insurancePreview').textContent=won(insurance);$('severancePreview').textContent=won(severance);$('rRevenue').textContent=won(revenue);$('rSalary').textContent=won(salary);$('rInsurance').textContent=won(insurance);$('rSeverance').textContent=won(severance);$('rProfit').textContent=won(profit);$('rProfit').style.color=profit<0?'#b91c1c':'#0f766e';$('rMargin').textContent=margin.toFixed(1)+'%'}function setMode(m){mode=m;$('autoBtn').classList.toggle('active',m==='auto');$('manualBtn').classList.toggle('active',m==='manual');$('autoArea').classList.toggle('hidden',m!=='auto');$('manualArea').classList.toggle('hidden',m!=='manual');calc()}$('autoBtn').addEventListener('click',()=>setMode('auto'));$('manualBtn').addEventListener('click',()=>setMode('manual'));$('addRow').addEventListener('click',()=>addRow(180,1));['manualRevenue','manualHours','hourly','transport','meal','extra','pensionRate','healthRate','employmentRate','accidentRate','severanceRate'].forEach(id=>$(id).addEventListener('input',calc));['pensionChk','healthChk','employmentChk','accidentChk','severanceChk'].forEach(id=>$(id).addEventListener('change',calc));$('resetBtn').addEventListener('click',()=>{$('rows').innerHTML='';addRow(180,20);setMode('auto');$('hourly').value=13500;$('transport').value=0;$('meal').value=0;$('extra').value=0;$('manualRevenue').value=0;$('manualHours').value=0;$('pensionChk').checked=$('healthChk').checked=$('employmentChk').checked=$('accidentChk').checked=$('severanceChk').checked=true;$('pensionRate').value=4.75;$('healthRate').value=4.0674;$('employmentRate').value=0.9;$('accidentRate').value=0.7;$('severanceRate').value=8.33;calc()});$('sampleBtn').addEventListener('click',()=>{$('rows').innerHTML='';addRow(180,20);$('hourly').value=13500;$('transport').value=100000;$('meal').value=0;$('extra').value=0;setMode('auto');calc()});addRow(180,20);calc();
+const fees={30:17450,60:25320,90:34120,120:43430,150:50640,180:57020,210:63530,240:70080};
+let clientSeq=0;
+const $=id=>document.getElementById(id);
+const won=n=>Math.round(Number(n)||0).toLocaleString('ko-KR')+'원';
+const nval=el=>Number(el?.value)||0;
+
+function scheduleRow(min=180,count=20){
+  const row=document.createElement('div');
+  row.className='schedule-row';
+  row.innerHTML=`
+    <div class="field" style="margin:0"><label>방문시간</label><select class="mins">${Object.keys(fees).map(m=>`<option value="${m}" ${Number(m)===min?'selected':''}>${m}분 · ${fees[m].toLocaleString()}원</option>`).join('')}</select></div>
+    <div class="field" style="margin:0"><label>횟수</label><div class="input-wrap has-suffix"><input class="count" type="number" min="0" value="${count}"><span class="suffix">회</span></div></div>
+    <button class="remove remove-row" type="button" aria-label="일정 삭제">×</button>`;
+  return row;
+}
+
+function clientTemplate(id,opts={}){
+  const card=document.createElement('section');
+  card.className='client-card';
+  card.dataset.client=id;
+  card.dataset.mode=opts.mode||'auto';
+  card.innerHTML=`
+    <div class="client-head">
+      <div class="client-title"><span>어르신 ${id}</span> 손익</div>
+      <button class="delete-client" type="button">어르신 삭제</button>
+    </div>
+    <div class="field">
+      <label>어르신 이름 <span style="font-weight:500;color:#94a3b8">(선택)</span></label>
+      <input class="client-name" type="text" placeholder="예: 홍길동" value="${opts.name||''}">
+    </div>
+    <div class="section-label">청구금액</div>
+    <div class="segment">
+      <button class="mode-auto active" type="button">시간 × 횟수 자동계산</button>
+      <button class="mode-manual" type="button">청구금액 직접입력</button>
+    </div>
+    <div class="auto-area">
+      <div class="schedule-rows"></div>
+      <button class="add add-row" type="button">+ 일정 추가</button>
+      <div class="summary-line"><span>근무시간</span><strong class="auto-hours">0시간</strong></div>
+      <div class="summary-line"><span>예상 청구금액</span><strong class="auto-revenue">0원</strong></div>
+    </div>
+    <div class="manual-area hidden">
+      <div class="grid2">
+        <div class="field"><label>청구금액</label><div class="input-wrap has-suffix"><input class="manual-revenue" type="number" min="0" value="${opts.manualRevenue||0}"><span class="suffix">원</span></div></div>
+        <div class="field"><label>총 근무시간</label><div class="input-wrap has-suffix"><input class="manual-hours" type="number" min="0" step="0.1" value="${opts.manualHours||0}"><span class="suffix">시간</span></div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">이 어르신 급여조건</div>
+    <div class="grid2">
+      <div class="field"><label>통상시급</label><div class="input-wrap has-suffix"><input class="hourly" type="number" min="0" value="${opts.hourly??13500}"><span class="suffix">원</span></div></div>
+      <div class="field"><label>교통비</label><div class="input-wrap has-suffix"><input class="transport" type="number" min="0" value="${opts.transport||0}"><span class="suffix">원</span></div></div>
+      <div class="field"><label>식대</label><div class="input-wrap has-suffix"><input class="meal" type="number" min="0" value="${opts.meal||0}"><span class="suffix">원</span></div></div>
+      <div class="field"><label>기타 추가금</label><div class="input-wrap has-suffix"><input class="extra" type="number" min="0" value="${opts.extra||0}"><span class="suffix">원</span></div></div>
+    </div>
+    <div class="client-summary">
+      <div class="mini"><div class="k">청구금액</div><div class="v client-revenue">0원</div></div>
+      <div class="mini"><div class="k">지급 급여</div><div class="v client-salary">0원</div></div>
+      <div class="mini"><div class="k">청구 - 급여</div><div class="v client-gap">0원</div></div>
+    </div>`;
+  const rows=card.querySelector('.schedule-rows');
+  (opts.schedules||[{min:180,count:20}]).forEach(s=>rows.appendChild(scheduleRow(s.min,s.count)));
+  if((opts.mode||'auto')==='manual') setClientMode(card,'manual',false);
+  return card;
+}
+
+function addClient(opts={}){
+  clientSeq++;
+  const card=clientTemplate(clientSeq,opts);
+  $('clients').appendChild(card);
+  updateClientNumbers();
+  calc();
+}
+
+function updateClientNumbers(){
+  const cards=[...document.querySelectorAll('.client-card')];
+  cards.forEach((card,i)=>{
+    const title=card.querySelector('.client-title span');
+    title.textContent=`어르신 ${i+1}`;
+    card.querySelector('.delete-client').classList.toggle('hidden',cards.length===1);
+  });
+  $('clientCount').value=cards.length;
+}
+
+function setClientMode(card,mode,runCalc=true){
+  card.dataset.mode=mode;
+  card.querySelector('.mode-auto').classList.toggle('active',mode==='auto');
+  card.querySelector('.mode-manual').classList.toggle('active',mode==='manual');
+  card.querySelector('.auto-area').classList.toggle('hidden',mode!=='auto');
+  card.querySelector('.manual-area').classList.toggle('hidden',mode!=='manual');
+  if(runCalc) calc();
+}
+
+function getAuto(card){
+  let revenue=0,minutes=0;
+  card.querySelectorAll('.schedule-row').forEach(r=>{
+    const m=nval(r.querySelector('.mins'));
+    const c=nval(r.querySelector('.count'));
+    revenue+=(fees[m]||0)*c;
+    minutes+=m*c;
+  });
+  return {revenue,hours:minutes/60};
+}
+
+function clientValues(card){
+  const auto=getAuto(card);
+  card.querySelector('.auto-hours').textContent=(Math.round(auto.hours*10)/10).toLocaleString('ko-KR')+'시간';
+  card.querySelector('.auto-revenue').textContent=won(auto.revenue);
+  const manual=card.dataset.mode==='manual';
+  const revenue=manual?nval(card.querySelector('.manual-revenue')):auto.revenue;
+  const hours=manual?nval(card.querySelector('.manual-hours')):auto.hours;
+  const salary=hours*nval(card.querySelector('.hourly'))+nval(card.querySelector('.transport'))+nval(card.querySelector('.meal'))+nval(card.querySelector('.extra'));
+  const gap=revenue-salary;
+  card.querySelector('.client-revenue').textContent=won(revenue);
+  card.querySelector('.client-salary').textContent=won(salary);
+  const gapEl=card.querySelector('.client-gap');
+  gapEl.textContent=won(gap);
+  gapEl.style.color=gap<0?'#b91c1c':'#0f766e';
+  return {revenue,hours,salary};
+}
+
+function insuranceAmount(base){
+  const defs=[['pensionChk','pensionRate'],['healthChk','healthRate'],['employmentChk','employmentRate'],['accidentChk','accidentRate']];
+  return defs.reduce((sum,[c,r])=>sum+($(c).checked?base*(nval($(r))/100):0),0);
+}
+
+function calc(){
+  let revenue=0,salary=0;
+  document.querySelectorAll('.client-card').forEach(card=>{
+    const v=clientValues(card);
+    revenue+=v.revenue;
+    salary+=v.salary;
+  });
+  const insurance=insuranceAmount(salary);
+  const severance=$('severanceChk').checked?salary*(nval($('severanceRate'))/100):0;
+  const profit=revenue-salary-insurance-severance;
+  const margin=revenue>0?profit/revenue*100:0;
+  $('salaryPreview').textContent=won(salary);
+  $('insurancePreview').textContent=won(insurance);
+  $('severancePreview').textContent=won(severance);
+  $('rRevenue').textContent=won(revenue);
+  $('rSalary').textContent=won(salary);
+  $('rInsurance').textContent=won(insurance);
+  $('rSeverance').textContent=won(severance);
+  $('rProfit').textContent=won(profit);
+  $('rProfit').style.color=profit<0?'#b91c1c':'#0f766e';
+  $('rMargin').textContent=margin.toFixed(1)+'%';
+}
+
+$('clients').addEventListener('click',e=>{
+  const card=e.target.closest('.client-card');
+  if(!card) return;
+  if(e.target.closest('.mode-auto')) setClientMode(card,'auto');
+  if(e.target.closest('.mode-manual')) setClientMode(card,'manual');
+  if(e.target.closest('.add-row')){card.querySelector('.schedule-rows').appendChild(scheduleRow(180,1));calc();}
+  if(e.target.closest('.remove-row')){e.target.closest('.schedule-row').remove();calc();}
+  if(e.target.closest('.delete-client')){card.remove();updateClientNumbers();calc();}
+});
+$('clients').addEventListener('input',calc);
+$('clients').addEventListener('change',calc);
+$('addClientBtn').addEventListener('click',()=>addClient({schedules:[{min:180,count:1}]}));
+['pensionRate','healthRate','employmentRate','accidentRate','severanceRate'].forEach(id=>$(id).addEventListener('input',calc));
+['pensionChk','healthChk','employmentChk','accidentChk','severanceChk'].forEach(id=>$(id).addEventListener('change',calc));
+
+$('resetBtn').addEventListener('click',()=>{
+  $('caregiverName').value='';
+  $('clients').innerHTML='';clientSeq=0;
+  addClient({schedules:[{min:180,count:20}],hourly:13500});
+  $('pensionChk').checked=$('healthChk').checked=$('employmentChk').checked=$('accidentChk').checked=$('severanceChk').checked=true;
+  $('pensionRate').value=4.75;$('healthRate').value=4.0674;$('employmentRate').value=0.9;$('accidentRate').value=0.7;$('severanceRate').value=8.33;
+  calc();
+});
+
+$('sampleBtn').addEventListener('click',()=>{
+  $('caregiverName').value='김영희';
+  $('clients').innerHTML='';clientSeq=0;
+  addClient({name:'박철수',schedules:[{min:180,count:20}],hourly:13500,transport:50000});
+  addClient({name:'이영자',schedules:[{min:180,count:12},{min:240,count:4}],hourly:14000,transport:80000,extra:30000});
+  addClient({name:'최순자',mode:'manual',manualRevenue:720000,manualHours:42,hourly:14500,meal:50000});
+  calc();
+});
+
+addClient({schedules:[{min:180,count:20}],hourly:13500});
+calc();
 </script>
 </body>
 </html>
