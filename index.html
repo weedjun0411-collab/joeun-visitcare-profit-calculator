@@ -4,75 +4,118 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>조은 수익계산기</title>
-<link rel="stylesheet" href="style.css?v=202608181624" />
+<link rel="stylesheet" href="style.css?v=202608181658" />
 </head>
 <body>
 <div class="wrap">
   <div class="header">
-    <div class="brand"><h1>조은 수익계산기</h1><span class="brand-tag">방문요양</span></div>
-    <div class="sub">요양보호사 1명 기준 · 어르신별 급여와 센터 잔액을 한눈에</div>
-    <div class="header-summary">
+    <div class="brand"><h1>조은 수익계산기</h1><span class="brand-tag">장기요양</span></div>
+    <div class="sub" id="headerSub">요양보호사 1명 기준 · 어르신별 급여와 센터 잔액을 한눈에</div>
+    <div class="tabs">
+      <button class="tab active" id="careTabBtn" type="button">방문요양</button>
+      <button class="tab" id="bathTabBtn" type="button">방문목욕</button>
+    </div>
+    <div class="header-summary" id="careHeaderSummary">
       <div class="head-sum"><div class="k">어르신 수</div><div class="v" id="headerClientCount">1명</div></div>
       <div class="head-sum"><div class="k">총 청구금액</div><div class="v" id="headerRevenue">0원</div></div>
       <div class="head-sum"><div class="k">예상 센터 잔액</div><div class="v" id="headerProfit">0원</div></div>
     </div>
+    <div class="header-summary hidden" id="bathHeaderSummary">
+      <div class="head-sum"><div class="k">이번 달 목욕 건수</div><div class="v" id="bathHeaderCases">0건</div></div>
+      <div class="head-sum"><div class="k">총 청구금액</div><div class="v" id="bathHeaderRevenue">0원</div></div>
+      <div class="head-sum"><div class="k">예상 센터 잔액</div><div class="v" id="bathHeaderProfit">0원</div></div>
+    </div>
   </div>
 
-  <section class="card">
-    <h2>요양보호사</h2>
-    <div class="caregiver-top">
-      <div class="field" style="margin:0">
-        <label>요양보호사 이름 <span style="font-weight:500;color:#94a3b8">(선택)</span></label>
-        <input id="caregiverName" type="text" placeholder="예: 김영희">
+  <main id="carePanel">
+    <section class="card">
+      <h2>요양보호사</h2>
+      <div class="caregiver-top">
+        <div class="field" style="margin:0">
+          <label>요양보호사 이름 <span class="optional">(선택)</span></label>
+          <input id="caregiverName" type="text" placeholder="예: 김영희">
+        </div>
+        <input id="clientCount" type="hidden" value="1">
       </div>
-      <input id="clientCount" type="hidden" value="1">
-    </div>
-  </section>
+    </section>
+    <div id="clients"></div>
+    <button class="add-client" id="addClientBtn" type="button">+ 어르신 추가</button>
+    <section class="card">
+      <h2>센터 부담 4대보험</h2>
+      <div class="note" style="margin:0 0 12px">위 모든 어르신의 급여를 합친 <strong>요양보호사 1명의 총 급여</strong>를 기준으로 한 번 계산합니다.</div>
+      <div class="checklist">
+        <div class="ins"><input id="pensionChk" type="checkbox" checked><div class="name">국민연금</div><div class="rate"><input id="pensionRate" type="number" step="0.0001" value="4.75"><span>%</span></div></div>
+        <div class="ins"><input id="healthChk" type="checkbox" checked><div class="name">건강보험 + 장기요양보험</div><div class="rate"><input id="healthRate" type="number" step="0.0001" value="4.0674"><span>%</span></div></div>
+        <div class="ins"><input id="employmentChk" type="checkbox" checked><div class="name">고용보험</div><div class="rate"><input id="employmentRate" type="number" step="0.0001" value="0.9"><span>%</span></div></div>
+        <div class="ins"><input id="accidentChk" type="checkbox" checked><div class="name">산재보험</div><div class="rate"><input id="accidentRate" type="number" step="0.0001" value="0.7"><span>%</span></div></div>
+      </div>
+      <div class="note">요율은 기관 실제 적용값에 맞게 수정할 수 있습니다.</div>
+      <div class="summary-line"><span>요양보호사 총 급여</span><strong id="salaryPreview">0원</strong></div>
+      <div class="summary-line"><span>센터 부담 4대보험 예상액</span><strong id="insurancePreview">0원</strong></div>
+    </section>
+    <section class="card">
+      <h2>퇴직금</h2>
+      <div class="ins"><input id="severanceChk" type="checkbox" checked><div class="name">총 월 급여의 1/12 적립</div><div class="rate"><input id="severanceRate" type="number" step="0.01" value="8.33"><span>%</span></div></div>
+      <div class="note">단순 수익성 계산용 예상 적립액입니다. 실제 법정 퇴직금 산정과는 차이가 날 수 있습니다.</div>
+      <div class="summary-line"><span>퇴직금 예상 적립액</span><strong id="severancePreview">0원</strong></div>
+    </section>
+    <section class="card results">
+      <h2>전체 계산 결과</h2>
+      <div class="result-grid">
+        <div class="result-item"><div class="k">전체 청구금액</div><div class="v" id="rRevenue">0원</div></div>
+        <div class="result-item"><div class="k">요양보호사 총 급여</div><div class="v" id="rSalary">0원</div></div>
+        <div class="result-item"><div class="k">4대보험 센터부담</div><div class="v" id="rInsurance">0원</div></div>
+        <div class="result-item"><div class="k">퇴직금 적립</div><div class="v" id="rSeverance">0원</div></div>
+      </div>
+      <div class="result-main"><div class="k">센터 예상 잔액</div><div class="v" id="rProfit">0원</div><div class="m">전체 마진율 <strong id="rMargin">0.0%</strong></div></div>
+    </section>
+    <div class="btns"><button class="btn secondary" id="resetBtn" type="button">초기화</button><button class="btn primary" id="sampleBtn" type="button">예시값 넣기</button></div>
+  </main>
 
-  <div id="clients"></div>
-  <button class="add-client" id="addClientBtn" type="button">+ 어르신 추가</button>
-
-  <section class="card">
-    <h2>센터 부담 4대보험</h2>
-    <div class="note" style="margin:0 0 12px">위 모든 어르신의 급여를 합친 <strong>요양보호사 1명의 총 급여</strong>를 기준으로 한 번 계산합니다.</div>
-    <div class="checklist">
-      <div class="ins"><input id="pensionChk" type="checkbox" checked><div class="name">국민연금</div><div class="rate"><input id="pensionRate" type="number" step="0.0001" value="4.75"><span>%</span></div></div>
-      <div class="ins"><input id="healthChk" type="checkbox" checked><div class="name">건강보험 + 장기요양보험</div><div class="rate"><input id="healthRate" type="number" step="0.0001" value="4.0674"><span>%</span></div></div>
-      <div class="ins"><input id="employmentChk" type="checkbox" checked><div class="name">고용보험</div><div class="rate"><input id="employmentRate" type="number" step="0.0001" value="0.9"><span>%</span></div></div>
-      <div class="ins"><input id="accidentChk" type="checkbox" checked><div class="name">산재보험</div><div class="rate"><input id="accidentRate" type="number" step="0.0001" value="0.7"><span>%</span></div></div>
-    </div>
-    <div class="note">요율은 기관 실제 적용값에 맞게 수정할 수 있습니다.</div>
-    <div class="summary-line"><span>요양보호사 총 급여</span><strong id="salaryPreview">0원</strong></div>
-    <div class="summary-line"><span>센터 부담 4대보험 예상액</span><strong id="insurancePreview">0원</strong></div>
-  </section>
-
-  <section class="card">
-    <h2>퇴직금</h2>
-    <div class="ins"><input id="severanceChk" type="checkbox" checked><div class="name">총 월 급여의 1/12 적립</div><div class="rate"><input id="severanceRate" type="number" step="0.01" value="8.33"><span>%</span></div></div>
-    <div class="note">단순 수익성 계산용 예상 적립액입니다. 실제 법정 퇴직금 산정과는 차이가 날 수 있습니다.</div>
-    <div class="summary-line"><span>퇴직금 예상 적립액</span><strong id="severancePreview">0원</strong></div>
-  </section>
-
-  <section class="card results">
-    <h2>전체 계산 결과</h2>
-    <div class="result-grid">
-      <div class="result-item"><div class="k">전체 청구금액</div><div class="v" id="rRevenue">0원</div></div>
-      <div class="result-item"><div class="k">요양보호사 총 급여</div><div class="v" id="rSalary">0원</div></div>
-      <div class="result-item"><div class="k">4대보험 센터부담</div><div class="v" id="rInsurance">0원</div></div>
-      <div class="result-item"><div class="k">퇴직금 적립</div><div class="v" id="rSeverance">0원</div></div>
-    </div>
-    <div class="result-main">
-      <div class="k">센터 예상 잔액</div>
-      <div class="v" id="rProfit">0원</div>
-      <div class="m">전체 마진율 <strong id="rMargin">0.0%</strong></div>
-    </div>
-  </section>
-
-  <div class="btns">
-    <button class="btn secondary" id="resetBtn" type="button">초기화</button>
-    <button class="btn primary" id="sampleBtn" type="button">예시값 넣기</button>
-  </div>
+  <main id="bathPanel" class="hidden">
+    <section class="card">
+      <div class="card-head"><h2>1. 이번 달 목욕 실적</h2><span class="badge">2026 수가 × 건수</span></div>
+      <div class="bath-type"><div class="bath-type-title">차량 이용 · 차량 내 목욕</div><div class="grid3"><div class="field"><label>1회 수가</label><div class="input-wrap has-suffix"><input id="bathFee1" type="number" min="0" value="88990"><span class="suffix">원</span></div></div><div class="field"><label>건수</label><div class="input-wrap has-suffix"><input id="bathCases1" type="number" min="0" value="0"><span class="suffix">건</span></div></div><div class="field"><label>청구금액</label><div class="readbox" id="bathRevenue1">0원</div></div></div></div>
+      <div class="bath-type"><div class="bath-type-title">차량 이용 · 가정 내 목욕</div><div class="grid3"><div class="field"><label>1회 수가</label><div class="input-wrap has-suffix"><input id="bathFee2" type="number" min="0" value="80230"><span class="suffix">원</span></div></div><div class="field"><label>건수</label><div class="input-wrap has-suffix"><input id="bathCases2" type="number" min="0" value="0"><span class="suffix">건</span></div></div><div class="field"><label>청구금액</label><div class="readbox" id="bathRevenue2">0원</div></div></div></div>
+      <div class="bath-type"><div class="bath-type-title">차량 미이용</div><div class="grid3"><div class="field"><label>1회 수가</label><div class="input-wrap has-suffix"><input id="bathFee3" type="number" min="0" value="50100"><span class="suffix">원</span></div></div><div class="field"><label>건수</label><div class="input-wrap has-suffix"><input id="bathCases3" type="number" min="0" value="0"><span class="suffix">건</span></div></div><div class="field"><label>청구금액</label><div class="readbox" id="bathRevenue3">0원</div></div></div></div>
+      <div class="note">60분 이상 제공 기준 기본 수가입니다. 40분 이상 60분 미만 등 별도 산정 상황은 현재 계산기에서 자동 반영하지 않습니다.</div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>2. 목욕 요양보호사</h2><span class="badge">건수 기반 급여</span></div>
+      <div id="bathStaff"></div><button class="add-client" id="addBathStaffBtn" type="button">+ 선생님 추가</button>
+      <div class="note">각 선생님이 실제 담당한 유형별 건수를 입력하면 인정시간 × 통상시급으로 급여를 계산합니다. 건당 인정시간은 직접 수정할 수 있습니다.</div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>3. 목욕차량 · 운영비</h2><span class="badge">1대 기본값 자동입력</span></div>
+      <div class="grid2"><div class="field"><label>목욕차량 수</label><div class="input-wrap has-suffix"><input id="bathVehicleCount" type="number" min="1" step="1" value="1"><span class="suffix">대</span></div></div><div class="field"><label>기본값 적용</label><button class="preset-btn" id="bathVehiclePresetBtn" type="button">1대 기본값으로 초기화</button></div></div>
+      <div class="cost-title">차량 운영비</div>
+      <div class="grid2">
+        <div class="field"><label>유류비</label><div class="input-wrap has-suffix"><input class="bath-cost scalable" id="bathFuel" type="number" min="0" value="500000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>차량 보험료 월 환산</label><div class="input-wrap has-suffix"><input class="bath-cost scalable" id="bathCarInsurance" type="number" min="0" value="120000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>자동차세 월 환산</label><div class="input-wrap has-suffix"><input class="bath-cost scalable" id="bathCarTax" type="number" min="0" value="30000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>정비 · 소모품 적립</label><div class="input-wrap has-suffix"><input class="bath-cost scalable" id="bathMaintenance" type="number" min="0" value="150000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>감가상각 · 리스비</label><div class="input-wrap has-suffix"><input class="bath-cost scalable" id="bathDepreciation" type="number" min="0" value="300000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>통행료 · 주차비</label><div class="input-wrap has-suffix"><input class="bath-cost scalable" id="bathToll" type="number" min="0" value="0"><span class="suffix">원</span></div></div>
+      </div>
+      <div class="cost-title">목욕 운영비</div>
+      <div class="grid2">
+        <div class="field"><label>목욕용품 · 소모품</label><div class="input-wrap has-suffix"><input class="bath-cost" id="bathSupplies" type="number" min="0" value="300000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>세탁 · 위생용품</label><div class="input-wrap has-suffix"><input class="bath-cost" id="bathLaundry" type="number" min="0" value="100000"><span class="suffix">원</span></div></div>
+        <div class="field"><label>기타 운영비</label><div class="input-wrap has-suffix"><input class="bath-cost" id="bathOtherCost" type="number" min="0" value="0"><span class="suffix">원</span></div></div>
+        <div class="field"><label>공통관리비 배부 <span class="optional">(선택)</span></label><div class="input-wrap has-suffix"><input class="bath-cost" id="bathCommonCost" type="number" min="0" value="0"><span class="suffix">원</span></div></div>
+      </div>
+      <div class="summary-line"><span>월 차량·운영비 합계</span><strong id="bathOperatingCost">0원</strong></div>
+      <div class="note">차량 기본값은 수익성 계산을 위한 예상 프리셋입니다. 실제 보험료·세금·정비비·유류비에 맞게 수정하세요. 차량 수를 바꾸면 차량 관련 기본값이 대수에 맞춰 다시 적용됩니다.</div>
+    </section>
+    <section class="card results">
+      <h2>방문목욕 전체 계산 결과</h2>
+      <div class="result-grid"><div class="result-item"><div class="k">총 청구금액</div><div class="v" id="bathRRevenue">0원</div></div><div class="result-item"><div class="k">선생님 총 급여</div><div class="v" id="bathRSalary">0원</div></div><div class="result-item"><div class="k">보험 + 퇴직금</div><div class="v" id="bathRLaborExtra">0원</div></div><div class="result-item"><div class="k">차량 · 운영비</div><div class="v" id="bathROperating">0원</div></div></div>
+      <div class="result-main"><div class="k">방문목욕 월 예상 센터 잔액</div><div class="v" id="bathRProfit">0원</div><div class="m">잔액률 <strong id="bathRMargin">0.0%</strong> · 건당 평균 잔액 <strong id="bathRPerCase">0원</strong></div></div>
+      <div class="bath-metrics"><div class="metric"><div class="k">건당 평균 매출</div><div class="v" id="bathPerRevenue">0원</div></div><div class="metric"><div class="k">건당 평균 인건비</div><div class="v" id="bathPerLabor">0원</div></div><div class="metric"><div class="k">건당 평균 운영비</div><div class="v" id="bathPerOperating">0원</div></div></div>
+    </section>
+    <div class="btns"><button class="btn secondary" id="bathResetBtn" type="button">초기화</button><button class="btn primary" id="bathSampleBtn" type="button">예시값 넣기</button></div>
+  </main>
 </div>
-<script src="app.js?v=202608181624"></script>
+<script src="app.js?v=202608181658"></script>
 </body>
 </html>
