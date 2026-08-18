@@ -1,162 +1,39 @@
 const fees={30:17450,60:25320,90:34120,120:43430,150:50640,180:57020,210:63530,240:70080};
-let clientSeq=0;
+const bathVehicleDefaults={fuel:500000,insurance:120000,tax:30000,maintenance:150000,depreciation:300000,toll:0};
+let clientSeq=0,bathStaffSeq=0;
 const $=id=>document.getElementById(id);
 const won=n=>Math.round(Number(n)||0).toLocaleString('ko-KR')+'원';
 const nval=el=>Number(el?.value)||0;
 
-function scheduleRow(min=180,count=20){
-  const row=document.createElement('div');
-  row.className='schedule-row';
-  row.innerHTML=`
-    <div class="field" style="margin:0"><label>방문시간</label><select class="mins">${Object.keys(fees).map(m=>`<option value="${m}" ${Number(m)===min?'selected':''}>${m}분 · ${fees[m].toLocaleString()}원</option>`).join('')}</select></div>
-    <div class="field" style="margin:0"><label>횟수</label><div class="input-wrap has-suffix"><input class="count" type="number" min="0" value="${count}"><span class="suffix">회</span></div></div>
-    <button class="remove remove-row" type="button" aria-label="일정 삭제">×</button>`;
-  return row;
+function switchTab(tab){
+  const care=tab==='care';
+  $('carePanel').classList.toggle('hidden',!care);$('bathPanel').classList.toggle('hidden',care);
+  $('careTabBtn').classList.toggle('active',care);$('bathTabBtn').classList.toggle('active',!care);
+  $('careHeaderSummary').classList.toggle('hidden',!care);$('bathHeaderSummary').classList.toggle('hidden',care);
+  $('headerSub').textContent=care?'요양보호사 1명 기준 · 어르신별 급여와 센터 잔액을 한눈에':'방문목욕 월 전체 실적 · 인건비 · 차량운영비를 한눈에';
 }
+$('careTabBtn').addEventListener('click',()=>switchTab('care'));$('bathTabBtn').addEventListener('click',()=>switchTab('bath'));
 
-function clientTemplate(id,opts={}){
-  const card=document.createElement('section');
-  card.className='client-card';
-  card.dataset.client=id;
-  card.innerHTML=`
-    <div class="client-head">
-      <div class="client-title"><span>어르신 ${id}</span> 손익</div>
-      <button class="delete-client" type="button">어르신 삭제</button>
-    </div>
-    <div class="field">
-      <label>어르신 이름 <span style="font-weight:500;color:#94a3b8">(선택)</span></label>
-      <input class="client-name" type="text" placeholder="예: 홍길동" value="${opts.name||''}">
-    </div>
-    <div class="section-label">청구금액</div>
-    <div class="auto-area">
-      <div class="schedule-rows"></div>
-      <button class="add add-row" type="button">+ 일정 추가</button>
-      <div class="summary-line"><span>근무시간</span><strong class="auto-hours">0시간</strong></div>
-      <div class="summary-line"><span>예상 청구금액</span><strong class="auto-revenue">0원</strong></div>
-    </div>
-    <div class="divider"></div>
-    <div class="section-label">이 어르신 급여조건</div>
-    <div class="grid2">
-      <div class="field"><label>통상시급</label><div class="input-wrap has-suffix"><input class="hourly" type="number" min="0" value="${opts.hourly??13000}"><span class="suffix">원</span></div></div>
-      <div class="field"><label>교통비</label><div class="input-wrap has-suffix"><input class="transport" type="number" min="0" value="${opts.transport||0}"><span class="suffix">원</span></div></div>
-      <div class="field"><label>식대</label><div class="input-wrap has-suffix"><input class="meal" type="number" min="0" value="${opts.meal||0}"><span class="suffix">원</span></div></div>
-      <div class="field"><label>기타 추가금</label><div class="input-wrap has-suffix"><input class="extra" type="number" min="0" value="${opts.extra||0}"><span class="suffix">원</span></div></div>
-    </div>
-    <div class="client-summary">
-      <div class="mini"><div class="k">청구금액</div><div class="v client-revenue">0원</div></div>
-      <div class="mini"><div class="k">지급 급여</div><div class="v client-salary">0원</div></div>
-      <div class="mini"><div class="k">청구 - 급여</div><div class="v client-gap">0원</div></div>
-    </div>`;
-  const rows=card.querySelector('.schedule-rows');
-  (opts.schedules||[{min:180,count:20}]).forEach(s=>rows.appendChild(scheduleRow(s.min,s.count)));
-  return card;
-}
+function scheduleRow(min=180,count=20){const row=document.createElement('div');row.className='schedule-row';row.innerHTML=`<div class="field" style="margin:0"><label>방문시간</label><select class="mins">${Object.keys(fees).map(m=>`<option value="${m}" ${Number(m)===min?'selected':''}>${m}분 · ${fees[m].toLocaleString()}원</option>`).join('')}</select></div><div class="field" style="margin:0"><label>횟수</label><div class="input-wrap has-suffix"><input class="count" type="number" min="0" value="${count}"><span class="suffix">회</span></div></div><button class="remove remove-row" type="button">×</button>`;return row;}
+function clientTemplate(id,opts={}){const card=document.createElement('section');card.className='client-card';card.innerHTML=`<div class="client-head"><div class="client-title"><span>어르신 ${id}</span> 손익</div><button class="delete-client" type="button">어르신 삭제</button></div><div class="field"><label>어르신 이름 <span class="optional">(선택)</span></label><input class="client-name" type="text" placeholder="예: 홍길동" value="${opts.name||''}"></div><div class="section-label">청구금액</div><div class="schedule-rows"></div><button class="add add-row" type="button">+ 일정 추가</button><div class="summary-line"><span>근무시간</span><strong class="auto-hours">0시간</strong></div><div class="summary-line"><span>예상 청구금액</span><strong class="auto-revenue">0원</strong></div><div class="divider"></div><div class="section-label">이 어르신 급여조건</div><div class="grid2"><div class="field"><label>통상시급</label><div class="input-wrap has-suffix"><input class="hourly" type="number" min="0" value="${opts.hourly??13000}"><span class="suffix">원</span></div></div><div class="field"><label>교통비</label><div class="input-wrap has-suffix"><input class="transport" type="number" min="0" value="${opts.transport||0}"><span class="suffix">원</span></div></div><div class="field"><label>식대</label><div class="input-wrap has-suffix"><input class="meal" type="number" min="0" value="${opts.meal||0}"><span class="suffix">원</span></div></div><div class="field"><label>기타 추가금</label><div class="input-wrap has-suffix"><input class="extra" type="number" min="0" value="${opts.extra||0}"><span class="suffix">원</span></div></div></div><div class="client-summary"><div class="mini"><div class="k">청구금액</div><div class="v client-revenue">0원</div></div><div class="mini"><div class="k">지급 급여</div><div class="v client-salary">0원</div></div><div class="mini"><div class="k">청구 - 급여</div><div class="v client-gap">0원</div></div></div>`;const rows=card.querySelector('.schedule-rows');(opts.schedules||[{min:180,count:20}]).forEach(s=>rows.appendChild(scheduleRow(s.min,s.count)));return card;}
+function addClient(opts={}){clientSeq++;$('clients').appendChild(clientTemplate(clientSeq,opts));updateClientNumbers();calcCare();}
+function updateClientNumbers(){const cards=[...document.querySelectorAll('.client-card')];cards.forEach((card,i)=>{card.querySelector('.client-title span').textContent=`어르신 ${i+1}`;card.querySelector('.delete-client').classList.toggle('hidden',cards.length===1)});$('clientCount').value=cards.length;$('headerClientCount').textContent=cards.length+'명';}
+function getAuto(card){let revenue=0,minutes=0;card.querySelectorAll('.schedule-row').forEach(r=>{const m=nval(r.querySelector('.mins')),c=nval(r.querySelector('.count'));revenue+=(fees[m]||0)*c;minutes+=m*c});return{revenue,hours:minutes/60};}
+function clientValues(card){const auto=getAuto(card);card.querySelector('.auto-hours').textContent=(Math.round(auto.hours*10)/10).toLocaleString('ko-KR')+'시간';card.querySelector('.auto-revenue').textContent=won(auto.revenue);const salary=auto.hours*nval(card.querySelector('.hourly'))+nval(card.querySelector('.transport'))+nval(card.querySelector('.meal'))+nval(card.querySelector('.extra'));const gap=auto.revenue-salary;card.querySelector('.client-revenue').textContent=won(auto.revenue);card.querySelector('.client-salary').textContent=won(salary);const gapEl=card.querySelector('.client-gap');gapEl.textContent=won(gap);gapEl.style.color=gap<0?'#b91c1c':'#0f766e';return{revenue:auto.revenue,salary};}
+function insuranceAmount(base){return [['pensionChk','pensionRate'],['healthChk','healthRate'],['employmentChk','employmentRate'],['accidentChk','accidentRate']].reduce((s,[c,r])=>s+($(c).checked?base*nval($(r))/100:0),0);}
+function calcCare(){let revenue=0,salary=0;document.querySelectorAll('.client-card').forEach(card=>{const v=clientValues(card);revenue+=v.revenue;salary+=v.salary});const insurance=insuranceAmount(salary),severance=$('severanceChk').checked?salary*nval($('severanceRate'))/100:0,profit=revenue-salary-insurance-severance,margin=revenue?profit/revenue*100:0;$('salaryPreview').textContent=won(salary);$('insurancePreview').textContent=won(insurance);$('severancePreview').textContent=won(severance);$('rRevenue').textContent=won(revenue);$('rSalary').textContent=won(salary);$('rInsurance').textContent=won(insurance);$('rSeverance').textContent=won(severance);$('rProfit').textContent=won(profit);$('rProfit').style.color=profit<0?'#b91c1c':'#0f766e';$('rMargin').textContent=margin.toFixed(1)+'%';$('headerRevenue').textContent=won(revenue);$('headerProfit').textContent=won(profit);$('headerProfit').style.color=profit<0?'#fecaca':'#fff';}
+$('clients').addEventListener('click',e=>{const card=e.target.closest('.client-card');if(!card)return;if(e.target.closest('.add-row')){card.querySelector('.schedule-rows').appendChild(scheduleRow(180,1));calcCare()}if(e.target.closest('.remove-row')){e.target.closest('.schedule-row').remove();calcCare()}if(e.target.closest('.delete-client')){card.remove();updateClientNumbers();calcCare()}});$('clients').addEventListener('input',calcCare);$('clients').addEventListener('change',calcCare);$('addClientBtn').addEventListener('click',()=>addClient({schedules:[{min:180,count:1}]}));['pensionRate','healthRate','employmentRate','accidentRate','severanceRate'].forEach(id=>$(id).addEventListener('input',calcCare));['pensionChk','healthChk','employmentChk','accidentChk','severanceChk'].forEach(id=>$(id).addEventListener('change',calcCare));
+$('resetBtn').addEventListener('click',()=>{$('caregiverName').value='';$('clients').innerHTML='';clientSeq=0;addClient({schedules:[{min:180,count:20}],hourly:13000});$('pensionChk').checked=$('healthChk').checked=$('employmentChk').checked=$('accidentChk').checked=$('severanceChk').checked=true;$('pensionRate').value=4.75;$('healthRate').value=4.0674;$('employmentRate').value=0.9;$('accidentRate').value=0.7;$('severanceRate').value=8.33;calcCare()});$('sampleBtn').addEventListener('click',()=>{$('caregiverName').value='김영희';$('clients').innerHTML='';clientSeq=0;addClient({name:'박철수',schedules:[{min:180,count:20}],hourly:13000,transport:50000});addClient({name:'이영자',schedules:[{min:180,count:12},{min:240,count:4}],hourly:13000,transport:80000,extra:30000});calcCare()});
 
-function addClient(opts={}){
-  clientSeq++;
-  const card=clientTemplate(clientSeq,opts);
-  $('clients').appendChild(card);
-  updateClientNumbers();
-  calc();
-}
+function staffInsuranceRow(cls,label,rate,checked=true){return `<div class="staff-ins"><input class="${cls}-chk" type="checkbox" ${checked?'checked':''}><div class="name">${label}</div><div class="rate"><input class="${cls}-rate" type="number" step="0.0001" value="${rate}"><span>%</span></div></div>`;}
+function bathStaffCard(opts={}){bathStaffSeq++;const c=document.createElement('div');c.className='bath-staff-card';c.innerHTML=`<div class="bath-staff-head"><div class="bath-staff-title">선생님 ${bathStaffSeq}</div><button class="delete-staff" type="button">선생님 삭제</button></div><div class="field"><label>선생님 이름 <span class="optional">(선택)</span></label><input class="staff-name" type="text" placeholder="예: 김영희" value="${opts.name||''}"></div>${[1,2,3].map((i)=>`<div class="staff-service"><div class="staff-service-title">${['차량 이용 · 차량 내 목욕','차량 이용 · 가정 내 목욕','차량 미이용'][i-1]}</div><div class="staff-service-grid"><div class="field"><label>담당 건수</label><div class="input-wrap has-suffix"><input class="staff-cases${i}" type="number" min="0" value="${opts['cases'+i]||0}"><span class="suffix">건</span></div></div><div class="field"><label>건당 인정시간</label><div class="input-wrap has-suffix"><input class="staff-mins${i}" type="number" min="0" value="${opts['mins'+i]??60}"><span class="suffix">분</span></div></div><div class="field"><label>근무시간</label><div class="readbox staff-hours${i}">0시간</div></div></div></div>`).join('')}<div class="grid2"><div class="field"><label>통상시급</label><div class="input-wrap has-suffix"><input class="staff-hourly" type="number" min="0" value="${opts.hourly??13000}"><span class="suffix">원</span></div></div><div class="field"><label>교통비 · 기타수당</label><div class="input-wrap has-suffix"><input class="staff-extra" type="number" min="0" value="${opts.extra||0}"><span class="suffix">원</span></div></div></div><div class="section-label">4대보험 · 퇴직금</div><div class="staff-ins-grid">${staffInsuranceRow('spension','국민연금',4.75,opts.pension!==false)}${staffInsuranceRow('shealth','건강+장기요양',4.0674,opts.health!==false)}${staffInsuranceRow('semploy','고용보험',0.9,opts.employ!==false)}${staffInsuranceRow('saccident','산재보험',0.7,opts.accident!==false)}${staffInsuranceRow('ssever','퇴직금',8.33,opts.sever!==false)}</div><div class="staff-summary"><div class="mini"><div class="k">총 근무시간</div><div class="v staff-total-hours">0시간</div></div><div class="mini"><div class="k">급여</div><div class="v staff-salary">0원</div></div><div class="mini"><div class="k">보험+퇴직</div><div class="v staff-extra-cost">0원</div></div><div class="mini"><div class="k">총 인건비</div><div class="v staff-total-cost">0원</div></div></div>`;return c;}
+function addBathStaff(opts={}){$('bathStaff').appendChild(bathStaffCard(opts));updateBathStaffNumbers();calcBath();}
+function updateBathStaffNumbers(){const cards=[...document.querySelectorAll('.bath-staff-card')];cards.forEach((c,i)=>{c.querySelector('.bath-staff-title').textContent=`선생님 ${i+1}${c.querySelector('.staff-name').value?' · '+c.querySelector('.staff-name').value:''}`;c.querySelector('.delete-staff').classList.toggle('hidden',cards.length===1)});}
+function calcBathStaff(c){let minutes=0;for(let i=1;i<=3;i++){const cases=nval(c.querySelector('.staff-cases'+i)),mins=nval(c.querySelector('.staff-mins'+i)),h=cases*mins/60;minutes+=cases*mins;c.querySelector('.staff-hours'+i).textContent=(Math.round(h*10)/10).toLocaleString('ko-KR')+'시간';}const hours=minutes/60,salary=hours*nval(c.querySelector('.staff-hourly'))+nval(c.querySelector('.staff-extra'));const defs=['spension','shealth','semploy','saccident','ssever'];let extra=0;defs.forEach(cls=>{if(c.querySelector('.'+cls+'-chk').checked)extra+=salary*nval(c.querySelector('.'+cls+'-rate'))/100});c.querySelector('.staff-total-hours').textContent=(Math.round(hours*10)/10).toLocaleString('ko-KR')+'시간';c.querySelector('.staff-salary').textContent=won(salary);c.querySelector('.staff-extra-cost').textContent=won(extra);c.querySelector('.staff-total-cost').textContent=won(salary+extra);return{salary,extra,total:salary+extra};}
+function applyVehiclePreset(){const count=Math.max(1,nval($('bathVehicleCount'))||1);$('bathFuel').value=bathVehicleDefaults.fuel*count;$('bathCarInsurance').value=bathVehicleDefaults.insurance*count;$('bathCarTax').value=bathVehicleDefaults.tax*count;$('bathMaintenance').value=bathVehicleDefaults.maintenance*count;$('bathDepreciation').value=bathVehicleDefaults.depreciation*count;$('bathToll').value=bathVehicleDefaults.toll*count;calcBath();}
+function calcBath(){const cases=[1,2,3].map(i=>nval($('bathCases'+i))),fee=[1,2,3].map(i=>nval($('bathFee'+i))),rev=cases.map((c,i)=>c*fee[i]);for(let i=1;i<=3;i++)$('bathRevenue'+i).textContent=won(rev[i-1]);const totalCases=cases.reduce((a,b)=>a+b,0),revenue=rev.reduce((a,b)=>a+b,0);let salary=0,laborExtra=0;document.querySelectorAll('.bath-staff-card').forEach(c=>{const v=calcBathStaff(c);salary+=v.salary;laborExtra+=v.extra});const operating=['bathFuel','bathCarInsurance','bathCarTax','bathMaintenance','bathDepreciation','bathToll','bathSupplies','bathLaundry','bathOtherCost','bathCommonCost'].reduce((s,id)=>s+nval($(id)),0),profit=revenue-salary-laborExtra-operating,margin=revenue?profit/revenue*100:0;$('bathOperatingCost').textContent=won(operating);$('bathHeaderCases').textContent=totalCases+'건';$('bathHeaderRevenue').textContent=won(revenue);$('bathHeaderProfit').textContent=won(profit);$('bathHeaderProfit').style.color=profit<0?'#fecaca':'#fff';$('bathRRevenue').textContent=won(revenue);$('bathRSalary').textContent=won(salary);$('bathRLaborExtra').textContent=won(laborExtra);$('bathROperating').textContent=won(operating);$('bathRProfit').textContent=won(profit);$('bathRProfit').style.color=profit<0?'#b91c1c':'#0f766e';$('bathRMargin').textContent=margin.toFixed(1)+'%';$('bathRPerCase').textContent=won(totalCases?profit/totalCases:0);$('bathPerRevenue').textContent=won(totalCases?revenue/totalCases:0);$('bathPerLabor').textContent=won(totalCases?(salary+laborExtra)/totalCases:0);$('bathPerOperating').textContent=won(totalCases?operating/totalCases:0);updateBathStaffNumbers();}
+$('bathStaff').addEventListener('input',calcBath);$('bathStaff').addEventListener('change',calcBath);$('bathStaff').addEventListener('click',e=>{if(e.target.closest('.delete-staff')){e.target.closest('.bath-staff-card').remove();updateBathStaffNumbers();calcBath()}});$('addBathStaffBtn').addEventListener('click',()=>addBathStaff());['bathFee1','bathFee2','bathFee3','bathCases1','bathCases2','bathCases3','bathSupplies','bathLaundry','bathOtherCost','bathCommonCost','bathFuel','bathCarInsurance','bathCarTax','bathMaintenance','bathDepreciation','bathToll'].forEach(id=>$(id).addEventListener('input',calcBath));$('bathVehiclePresetBtn').addEventListener('click',applyVehiclePreset);$('bathVehicleCount').addEventListener('change',applyVehiclePreset);
+function resetBath(){$('bathFee1').value=88990;$('bathFee2').value=80230;$('bathFee3').value=50100;$('bathCases1').value=$('bathCases2').value=$('bathCases3').value=0;$('bathVehicleCount').value=1;$('bathSupplies').value=300000;$('bathLaundry').value=100000;$('bathOtherCost').value=0;$('bathCommonCost').value=0;$('bathStaff').innerHTML='';bathStaffSeq=0;addBathStaff();applyVehiclePreset();calcBath();}
+$('bathResetBtn').addEventListener('click',resetBath);$('bathSampleBtn').addEventListener('click',()=>{$('bathCases1').value=40;$('bathCases2').value=20;$('bathCases3').value=8;$('bathStaff').innerHTML='';bathStaffSeq=0;addBathStaff({name:'김영희',cases1:22,cases2:10,cases3:4,hourly:13000,extra:50000});addBathStaff({name:'박영자',cases1:20,cases2:10,cases3:4,hourly:13000,extra:50000});addBathStaff({name:'이순희',cases1:18,cases2:10,cases3:4,hourly:13000,extra:30000,pension:false});addBathStaff({name:'최정희',cases1:20,cases2:10,cases3:4,hourly:13000,extra:30000,pension:false});$('bathSupplies').value=300000;$('bathLaundry').value=100000;applyVehiclePreset();calcBath();});
 
-function updateClientNumbers(){
-  const cards=[...document.querySelectorAll('.client-card')];
-  cards.forEach((card,i)=>{
-    const title=card.querySelector('.client-title span');
-    title.textContent=`어르신 ${i+1}`;
-    card.querySelector('.delete-client').classList.toggle('hidden',cards.length===1);
-  });
-  $('clientCount').value=cards.length; $('headerClientCount').textContent=cards.length+'명';
-}
-
-function getAuto(card){
-  let revenue=0,minutes=0;
-  card.querySelectorAll('.schedule-row').forEach(r=>{
-    const m=nval(r.querySelector('.mins'));
-    const c=nval(r.querySelector('.count'));
-    revenue+=(fees[m]||0)*c;
-    minutes+=m*c;
-  });
-  return {revenue,hours:minutes/60};
-}
-
-function clientValues(card){
-  const auto=getAuto(card);
-  card.querySelector('.auto-hours').textContent=(Math.round(auto.hours*10)/10).toLocaleString('ko-KR')+'시간';
-  card.querySelector('.auto-revenue').textContent=won(auto.revenue);
-  const revenue=auto.revenue;
-  const hours=auto.hours;
-  const salary=hours*nval(card.querySelector('.hourly'))+nval(card.querySelector('.transport'))+nval(card.querySelector('.meal'))+nval(card.querySelector('.extra'));
-  const gap=revenue-salary;
-  card.querySelector('.client-revenue').textContent=won(revenue);
-  card.querySelector('.client-salary').textContent=won(salary);
-  const gapEl=card.querySelector('.client-gap');
-  gapEl.textContent=won(gap);
-  gapEl.style.color=gap<0?'#b91c1c':'#0f766e';
-  return {revenue,hours,salary};
-}
-
-function insuranceAmount(base){
-  const defs=[['pensionChk','pensionRate'],['healthChk','healthRate'],['employmentChk','employmentRate'],['accidentChk','accidentRate']];
-  return defs.reduce((sum,[c,r])=>sum+($(c).checked?base*(nval($(r))/100):0),0);
-}
-
-function calc(){
-  let revenue=0,salary=0;
-  document.querySelectorAll('.client-card').forEach(card=>{
-    const v=clientValues(card);
-    revenue+=v.revenue;
-    salary+=v.salary;
-  });
-  const insurance=insuranceAmount(salary);
-  const severance=$('severanceChk').checked?salary*(nval($('severanceRate'))/100):0;
-  const profit=revenue-salary-insurance-severance;
-  const margin=revenue>0?profit/revenue*100:0;
-  $('salaryPreview').textContent=won(salary);
-  $('insurancePreview').textContent=won(insurance);
-  $('severancePreview').textContent=won(severance);
-  $('rRevenue').textContent=won(revenue);
-  $('rSalary').textContent=won(salary);
-  $('rInsurance').textContent=won(insurance);
-  $('rSeverance').textContent=won(severance);
-  $('rProfit').textContent=won(profit);
-  $('rProfit').style.color=profit<0?'#b91c1c':'#0f766e';
-  $('rMargin').textContent=margin.toFixed(1)+'%';
-  $('headerRevenue').textContent=won(revenue);
-  $('headerProfit').textContent=won(profit);
-  $('headerProfit').style.color=profit<0?'#fecaca':'#fff';
-}
-
-$('clients').addEventListener('click',e=>{
-  const card=e.target.closest('.client-card');
-  if(!card) return;
-  if(e.target.closest('.add-row')){card.querySelector('.schedule-rows').appendChild(scheduleRow(180,1));calc();}
-  if(e.target.closest('.remove-row')){e.target.closest('.schedule-row').remove();calc();}
-  if(e.target.closest('.delete-client')){card.remove();updateClientNumbers();calc();}
-});
-$('clients').addEventListener('input',calc);
-$('clients').addEventListener('change',calc);
-$('addClientBtn').addEventListener('click',()=>addClient({schedules:[{min:180,count:1}]}));
-['pensionRate','healthRate','employmentRate','accidentRate','severanceRate'].forEach(id=>$(id).addEventListener('input',calc));
-['pensionChk','healthChk','employmentChk','accidentChk','severanceChk'].forEach(id=>$(id).addEventListener('change',calc));
-
-$('resetBtn').addEventListener('click',()=>{
-  $('caregiverName').value='';
-  $('clients').innerHTML='';clientSeq=0;
-  addClient({schedules:[{min:180,count:20}],hourly:13000});
-  $('pensionChk').checked=$('healthChk').checked=$('employmentChk').checked=$('accidentChk').checked=$('severanceChk').checked=true;
-  $('pensionRate').value=4.75;$('healthRate').value=4.0674;$('employmentRate').value=0.9;$('accidentRate').value=0.7;$('severanceRate').value=8.33;
-  calc();
-});
-
-$('sampleBtn').addEventListener('click',()=>{
-  $('caregiverName').value='김영희';
-  $('clients').innerHTML='';clientSeq=0;
-  addClient({name:'박철수',schedules:[{min:180,count:20}],hourly:13000,transport:50000});
-  addClient({name:'이영자',schedules:[{min:180,count:12},{min:240,count:4}],hourly:13000,transport:80000,extra:30000});
-  calc();
-});
-
-addClient({schedules:[{min:180,count:20}],hourly:13000});
-calc();
+addClient({schedules:[{min:180,count:20}],hourly:13000});addBathStaff();applyVehiclePreset();calcCare();calcBath();
