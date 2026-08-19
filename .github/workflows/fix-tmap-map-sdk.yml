@@ -1,0 +1,60 @@
+name: Fix TMAP map SDK readiness
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch TMAP SDK loader
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('bath-route/index.html')
+          s=p.read_text(encoding='utf-8')
+          old="""async function loadTmapSdk(key){if(window.Tmapv2)return;if(tmapSdkPromise)return tmapSdkPromise;tmapSdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey='+encodeURIComponent(key);s.onload=()=>resolve();s.onerror=()=>reject(new Error('TMAP 지도 SDK 로드 실패'));document.head.appendChild(s)});return tmapSdkPromise}"""
+          new="""function tmapSdkReady(){return!!(window.Tmapv2&&typeof window.Tmapv2.Map==='function'&&typeof window.Tmapv2.LatLng==='function')}
+async function loadTmapSdk(key){
+  if(tmapSdkReady())return;
+  if(tmapSdkPromise)return tmapSdkPromise;
+  tmapSdkPromise=new Promise((resolve,reject)=>{
+    let script=document.getElementById('tmapRasterSdk');
+    const waitReady=()=>{
+      let tries=0;
+      const timer=setInterval(()=>{
+        if(tmapSdkReady()){clearInterval(timer);resolve();return}
+        if(++tries>=120){clearInterval(timer);reject(new Error('TMAP 지도 SDK 초기화 실패 (LatLng 준비 안됨)'))}
+      },50)
+    };
+    if(script){
+      if(tmapSdkReady()){resolve();return}
+      script.remove();
+    }
+    script=document.createElement('script');
+    script.id='tmapRasterSdk';
+    script.src='https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey='+encodeURIComponent(key);
+    script.onload=waitReady;
+    script.onerror=()=>reject(new Error('TMAP 지도 SDK 로드 실패'));
+    document.head.appendChild(script)
+  });
+  try{await tmapSdkPromise}catch(e){tmapSdkPromise=null;throw e}
+}"""
+          if old not in s:
+              raise SystemExit('target loader not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit patch and remove workflow
+        run: |
+          rm .github/workflows/fix-tmap-map-sdk.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bath-route/index.html .github/workflows/fix-tmap-map-sdk.yml
+          git commit -m "Wait for TMAP map SDK readiness before drawing"
+          git push
