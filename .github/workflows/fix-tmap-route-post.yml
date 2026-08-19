@@ -1,0 +1,65 @@
+name: Fix TMAP route API call
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch routeLeg
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('bath-route/index.html')
+          s = p.read_text(encoding='utf-8')
+          start = s.index('const legMemo=new Map();async function routeLeg(')
+          end = s.index('\nasync function mapLimit', start)
+          new = r'''const legMemo=new Map();async function routeLeg(from,to,key,needPath=false){
+  const k=`${from.lon},${from.lat}>${to.lon},${to.lat}`;
+  if(legMemo.has(k)&&(!needPath||legMemo.get(k).path))return legMemo.get(k);
+  const body={
+    startX:String(from.lon),startY:String(from.lat),endX:String(to.lon),endY:String(to.lat),
+    reqCoordType:'WGS84GEO',resCoordType:'WGS84GEO',searchOption:'0',startName:'출발',endName:'도착'
+  };
+  const r=await fetch('https://apis.openapi.sk.com/tmap/routes?version=1&format=json',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','appKey':key},
+    body:JSON.stringify(body)
+  });
+  const raw=await r.text();
+  let j=null;
+  try{j=raw?JSON.parse(raw):null}catch(e){}
+  const apiMsg=j?.error?.message||j?.errorMessage||j?.message||'';
+  if(!r.ok||j?.error){
+    throw new Error('TMAP 경로 API 오류'+(apiMsg?': '+apiMsg:' (HTTP '+r.status+')'));
+  }
+  let sec=Number(j?.features?.[0]?.properties?.totalTime)||0,path=[];
+  if(Array.isArray(j?.features))for(const f of j.features){
+    const t=Number(f?.properties?.totalTime);if(t>sec)sec=t;
+    const g=f?.geometry;
+    if(g?.type==='LineString')for(const p of g.coordinates||[])path.push({lon:Number(p[0]),lat:Number(p[1])});
+    if(g?.type==='MultiLineString')for(const line of g.coordinates||[])for(const p of line)path.push({lon:Number(p[0]),lat:Number(p[1])});
+  }
+  if(!sec){
+    const detail=apiMsg||(raw&&raw.length<300?raw:'응답에 totalTime이 없음');
+    throw new Error('TMAP 이동시간 응답 오류: '+detail);
+  }
+  const out={mins:Math.max(1,Math.round(sec/60)),path};legMemo.set(k,out);return out
+}'''
+          s = s[:start] + new + s[end:]
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bath-route/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix TMAP route API POST handling"
+          git push
