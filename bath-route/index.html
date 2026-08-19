@@ -95,8 +95,7 @@ td input,td select{width:100%;min-height:34px;padding:6px 7px;font-size:11px}
       <span class="pill" id="dbPill">저장 확인중</span>
       <span class="pill warn" id="backupPill">PC 백업 미연결</span>
       <span class="pill" id="tmapPill">TMAP 미확인</span>
-      <span class="pill version">PC v2</span>
-    </div>
+          </div>
   </section>
 
   <section class="toolbar">
@@ -145,7 +144,7 @@ td input,td select{width:100%;min-height:34px;padding:6px 7px;font-size:11px}
         <div class="help">희망시간대: <b>10:00-12:00</b> · 불가시간: <b>09:00-11:00 / 14:00-15:30</b></div>
       </div>
       <div class="storage-note">
-        저장 방식: IndexedDB를 기본 저장소로 사용하고 localStorage에 한 번 더 복제합니다. 가능하면 브라우저 영구저장을 요청합니다.
+        저장 방식: 브라우저 내부 저장소(IndexedDB) 한 곳에 자동저장합니다.
         PC 백업 파일이 연결된 경우 수정할 때마다 파일에도 자동저장하며, 브라우저 데이터가 비어 있을 때는 백업 파일을 임의로 덮어쓰지 않습니다.
       </div>
     </section>
@@ -185,7 +184,6 @@ const WEEK=['월','화','수','목','금','토'];
 const DEFAULT_CENTER='전북특별자치도 전주시 완산구 용머리로 20-1';
 const OLD_DATA_KEY='joeun_bath_route_clients_v3';
 const OLD_SET_KEY='joeun_bath_route_settings_v3';
-const MIRROR_KEY='joeun_bath_route_pc_v2';
 const DB_NAME='joeunBathRoutePCDB';
 const DB_VERSION=2;
 let selectedDay='월', state=null, db=null, backupHandle=null, saveTimer=null, fileTimer=null;
@@ -249,9 +247,6 @@ async function loadInitialState(){
   let s=null;
   try{s=await idbGet('state','main')}catch(e){console.warn(e)}
   if(!s){
-    try{s=JSON.parse(localStorage.getItem(MIRROR_KEY)||'null')}catch(e){}
-  }
-  if(!s){
     let oldClients=[],oldSettings={};
     try{oldClients=JSON.parse(localStorage.getItem(OLD_DATA_KEY)||'[]')}catch(e){}
     try{oldSettings=JSON.parse(localStorage.getItem(OLD_SET_KEY)||'{}')}catch(e){}
@@ -290,7 +285,6 @@ async function saveState(){
   pullStateFromUI();
   try{
     await idbPut('state','main',state);
-    localStorage.setItem(MIRROR_KEY,JSON.stringify(state));
     $('dbPill').textContent='저장됨 '+now();
     $('dbPill').className='pill ok';
     $('saveText').textContent='저장됨 '+now();
@@ -366,8 +360,7 @@ async function syncWithBackupOnLoad(){
       if(!hasMeaningfulData(state) || ft>bt){
         state=fileState;
         await idbPut('state','main',state);
-        localStorage.setItem(MIRROR_KEY,JSON.stringify(state));
-        renderState();
+            renderState();
         showInfo('PC 백업 파일의 최신 데이터를 자동 복구했습니다.');
       }else if(bt>ft){
         await writeHandleFile(backupHandle,state);
@@ -421,7 +414,7 @@ $('connectBackup').onclick=async()=>{
           const ft=Date.parse(fileState.updatedAt||0)||0, bt=Date.parse(state.updatedAt||0)||0;
           if(!hasMeaningfulData(state) || ft>bt){
             state=fileState; await idbPut('state','main',state);
-            localStorage.setItem(MIRROR_KEY,JSON.stringify(state)); renderState();
+            renderState();
           }else{
             await writeHandleFile(backupHandle,state);
           }
@@ -462,7 +455,6 @@ $('restoreBackup').onclick=async()=>{
     backupHandle=h;
     await idbPut('handles','main',h);
     await idbPut('state','main',state);
-    localStorage.setItem(MIRROR_KEY,JSON.stringify(state));
     renderState();
     $('backupPill').textContent='PC 백업 연결됨';
     $('backupPill').className='pill ok';
@@ -646,10 +638,9 @@ async function init(){
     state=await loadInitialState();
     renderState();
     const persistent=await requestPersistentStorage();
-    $('dbPill').textContent=persistent?'브라우저 영구저장':'브라우저 이중저장';
+    $('dbPill').textContent='브라우저 저장';
     $('dbPill').className='pill ok';
     await idbPut('state','main',state);
-    localStorage.setItem(MIRROR_KEY,JSON.stringify(state));
     await syncWithBackupOnLoad();
   }catch(e){
     console.error(e);
