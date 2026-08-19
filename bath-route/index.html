@@ -5,650 +5,89 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>조은 방문목욕 동선표</title>
 <style>
-:root{
-  --bg:#eef2f6;--card:#fff;--text:#182230;--muted:#667085;--line:#d9e1ea;
-  --navy:#173b67;--blue:#2563eb;--green:#087a63;--red:#b42318;--orange:#b45309;
-  --soft:#f7f9fc
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-width:1180px;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Pretendard","Noto Sans KR",sans-serif}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.app{width:1440px;max-width:calc(100vw - 24px);margin:12px auto 36px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;background:var(--navy);color:#fff;border-radius:16px;padding:17px 20px;box-shadow:0 7px 24px rgba(23,59,103,.16)}
-.brand h1{font-size:26px;margin:0;letter-spacing:-.04em}
-.brand p{margin:5px 0 0;font-size:12px;color:#dbe7f3}
-.statuses{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.pill{padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);white-space:nowrap}
-.pill.ok{background:rgba(16,185,129,.23)}
-.pill.warn{background:rgba(245,158,11,.25)}
-.pill.bad{background:rgba(239,68,68,.24)}
-.toolbar{display:grid;grid-template-columns:1.15fr 1fr auto;gap:10px;margin-top:10px}
-.toolbox{background:#fff;border:1px solid var(--line);border-radius:13px;padding:11px 12px}
-.toolbox label{display:block;font-size:11px;font-weight:900;color:#475467;margin-bottom:5px}
-.inline{display:flex;gap:7px;align-items:center}
-input,select{min-height:38px;border:1px solid #cbd5df;border-radius:8px;padding:7px 9px;background:#fff;color:var(--text)}
-input:focus,select:focus{outline:none;border-color:#8aa9e8;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
-.inline input{width:100%}
-.btn{border:1px solid #ccd6e2;background:#fff;color:#344054;border-radius:8px;padding:8px 11px;font-weight:900;font-size:12px;white-space:nowrap}
-.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.btn.danger{color:var(--red);border-color:#efc0c0;background:#fff7f7}
-.backupbox{display:flex;gap:6px;align-items:center;justify-content:flex-end}
-.main{display:grid;grid-template-columns:minmax(0,1.72fr) minmax(390px,.78fr);gap:10px;margin-top:10px;align-items:start}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 10px rgba(15,23,42,.03)}
-.cardhead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px 10px}
-.cardhead h2{margin:0;font-size:18px;letter-spacing:-.025em}
-.sub{font-size:11px;color:var(--muted)}
-.tablewrap{border-top:1px solid #edf1f5;overflow:auto;max-height:690px}
-table{border-collapse:separate;border-spacing:0;width:100%;min-width:910px}
-th,td{padding:7px 6px;border-bottom:1px solid #edf1f5;text-align:left;font-size:11px;vertical-align:middle}
-th{position:sticky;top:0;z-index:3;background:#f7f9fb;color:#475467;font-weight:950}
-td input,td select{width:100%;min-height:34px;padding:6px 7px;font-size:11px}
-.namecol{width:92px}.addrcol{width:255px}.dayscol{width:190px}.prefcol{width:150px}.minscol{width:70px}.blockcol{width:178px}.delcol{width:48px}
-.daychecks{display:flex;gap:2px;white-space:nowrap}
-.daycheck{position:relative}
-.daycheck input{position:absolute;opacity:0;pointer-events:none}
-.daycheck span{display:block;min-width:25px;text-align:center;border:1px solid #d7dee7;border-radius:6px;padding:6px 4px;color:#667085;font-weight:900;background:#fff}
-.daycheck input:checked+span{background:#e9f0ff;border-color:#9bb3e9;color:#1d4ed8}
-.del{border:1px solid #efc1c1;background:#fff6f6;color:var(--red);border-radius:7px;padding:7px 8px;font-size:11px;font-weight:900}
-.tablefoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px 12px}
-.add{border:1px dashed #87a2bd;background:#f5f9fd;color:var(--navy);border-radius:8px;padding:9px 14px;font-weight:950;font-size:12px}
-.help{font-size:11px;color:#667085;text-align:right;line-height:1.5}
-.right{position:sticky;top:12px}
-.planbox{padding:14px}
-.dayrow{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
-.daybtn{border:1px solid #d7e0e9;background:#fff;color:#475467;border-radius:8px;padding:9px 4px;font-weight:950}
-.daybtn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.make{width:100%;margin-top:8px;border:0;background:var(--blue);color:#fff;border-radius:9px;padding:12px;font-size:14px;font-weight:950}
-.make:disabled{opacity:.55;cursor:wait}
-.alert{display:none;margin-top:8px;border-radius:8px;padding:9px 10px;font-size:11px;line-height:1.45}
-.alert.info{background:#eff6ff;color:#1e40af}.alert.error{background:#fff1f2;color:#9f1239}
-.routehead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #edf1f5}
-.routehead strong{font-size:16px}.routehead span{font-size:10px;color:#667085}
-.route{margin-top:8px;max-height:535px;overflow:auto;padding-right:4px}
-.empty{padding:25px 10px;text-align:center;color:#98a2b3;border:1px dashed #d7dee7;border-radius:9px;font-size:11px}
-.stop{display:grid;grid-template-columns:58px 20px 1fr;gap:5px}
-.clock{font-size:12px;font-weight:950;color:var(--blue);text-align:right;padding-top:10px}
-.track{display:flex;flex-direction:column;align-items:center}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--blue);margin-top:12px;z-index:2}
-.line{width:2px;background:#d0d5dd;flex:1;min-height:34px}
-.stop:last-child .line{display:none}
-.stopbody{border:1px solid #e2e8f0;border-radius:9px;padding:8px 9px;margin-bottom:5px}
-.name{font-weight:950;font-size:12px}.addr{font-size:10px;color:#667085;margin-top:2px;line-height:1.35}
-.tags{margin-top:5px}.tag{display:inline-block;border-radius:999px;padding:3px 6px;font-size:9px;font-weight:900;margin:0 3px 2px 0}
-.t60{background:#e8f0ff;color:#1d4ed8}.t40{background:#fff2e2;color:#b45309}.center{background:#eef4fb;color:var(--navy)}.move{background:#ecfdf5;color:#166534}.blocked{background:#fee2e2;color:#991b1b}.pref{background:#f3e8ff;color:#7e22ce}.miss{background:#fff1f2;color:#be123c}.wait{background:#fef3c7;color:#92400e}
-.leg{margin:-1px 0 4px 78px;border-left:2px dashed #d0d5dd;padding:4px 7px;color:#667085;font-size:10px}
-.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}
-.sum{background:#f7f9fb;border-radius:8px;padding:9px}.sum .k{font-size:10px;color:#667085}.sum .v{font-size:14px;font-weight:950;margin-top:2px}
-.storage-note{padding:0 12px 12px;font-size:10px;color:#667085;line-height:1.45}
-.version{opacity:.7}
+:root{--bg:#edf1f5;--card:#fff;--text:#172033;--muted:#667085;--line:#d8e0e8;--navy:#173b67;--blue:#2563eb;--green:#087a63;--red:#b42318;--orange:#b45309;--purple:#7e22ce;--soft:#f7f9fc}
+*{box-sizing:border-box}html,body{margin:0;min-width:1240px;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Pretendard","Noto Sans KR",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.app{width:1580px;max-width:calc(100vw - 24px);margin:12px auto 36px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;background:var(--navy);color:#fff;border-radius:16px;padding:17px 20px;box-shadow:0 7px 24px rgba(23,59,103,.16)}.brand h1{font-size:26px;margin:0;letter-spacing:-.04em}.brand p{margin:5px 0 0;font-size:12px;color:#dbe7f3}.statuses{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill{padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);white-space:nowrap}.pill.ok{background:rgba(16,185,129,.23)}.pill.warn{background:rgba(245,158,11,.25)}.pill.bad{background:rgba(239,68,68,.24)}.settings{display:grid;grid-template-columns:1.15fr .9fr 1.45fr auto;gap:9px;margin-top:10px}.box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 11px}.box label{display:block;font-size:10px;color:#475467;font-weight:950;margin-bottom:4px}.row{display:flex;gap:6px;align-items:center}.row input,.row select{width:100%}input,select{min-height:36px;border:1px solid #cbd5df;border-radius:8px;padding:6px 8px;background:#fff;color:var(--text)}input:focus,select:focus{outline:none;border-color:#8aa9e8;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.timegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.timegrid label{margin:0}.timegrid input{width:100%;font-size:11px}.btn{border:1px solid #ccd6e2;background:#fff;color:#344054;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:900;white-space:nowrap}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.green{background:var(--green);border-color:var(--green);color:#fff}.btn.danger{color:var(--red);border-color:#efc0c0;background:#fff7f7}.backupbox{display:flex;gap:5px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.main{display:grid;grid-template-columns:minmax(0,1.68fr) minmax(440px,.82fr);gap:10px;margin-top:10px;align-items:start}.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 10px rgba(15,23,42,.03)}.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px 9px}.cardhead h2{margin:0;font-size:18px;letter-spacing:-.025em}.sub{font-size:10px;color:var(--muted);line-height:1.45}.tablewrap{border-top:1px solid #edf1f5;overflow:auto;max-height:690px}table{border-collapse:separate;border-spacing:0;width:100%;min-width:980px}th,td{padding:6px;border-bottom:1px solid #edf1f5;text-align:left;font-size:11px;vertical-align:middle}th{position:sticky;top:0;z-index:3;background:#f7f9fb;color:#475467;font-weight:950}td input,td select{width:100%;min-height:33px;padding:5px 6px;font-size:11px}.namecol{width:90px}.addrcol{width:270px}.statuscol{width:76px}.dayscol{width:184px}.minscol{width:67px}.pausecol{width:65px}.detailcol{width:72px}.delcol{width:45px}.daychecks{display:flex;gap:2px;white-space:nowrap}.daycheck{position:relative}.daycheck input{position:absolute;opacity:0;pointer-events:none}.daycheck span{display:block;min-width:24px;text-align:center;border:1px solid #d7dee7;border-radius:6px;padding:6px 4px;color:#667085;font-weight:900;background:#fff}.daycheck input:checked+span{background:#e9f0ff;border-color:#9bb3e9;color:#1d4ed8}.addrstatus{font-size:10px;font-weight:900;white-space:nowrap}.addrstatus.ok{color:var(--green)}.addrstatus.bad{color:var(--red)}.addrstatus.wait{color:var(--orange)}.mini{border:1px solid #d5dde7;background:#fff;border-radius:7px;padding:6px 7px;font-size:10px;font-weight:900}.mini.detail{color:var(--navy);background:#f4f8fc}.mini.del{color:var(--red);background:#fff6f6;border-color:#efc1c1}.pausecheck{display:flex;justify-content:center}.pausecheck input{width:17px;height:17px}.tablefoot{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:9px 11px 11px}.add{border:1px dashed #87a2bd;background:#f5f9fd;color:var(--navy);border-radius:8px;padding:8px 13px;font-weight:950;font-size:11px}.help{font-size:10px;color:#667085;text-align:right;line-height:1.45}.right{position:sticky;top:10px}.planbox{padding:13px}.plan-top{display:grid;grid-template-columns:150px 1fr;gap:7px;align-items:end}.plan-top label{font-size:10px;font-weight:900;color:#475467;display:block;margin-bottom:4px}.dayrow{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.daybtn{border:1px solid #d7e0e9;background:#fff;color:#475467;border-radius:7px;padding:8px 3px;font-weight:950;font-size:11px}.daybtn.active{background:var(--navy);color:#fff;border-color:var(--navy)}.make{width:100%;margin-top:7px;border:0;background:var(--blue);color:#fff;border-radius:9px;padding:11px;font-size:13px;font-weight:950}.make:disabled{opacity:.55;cursor:wait}.progress{display:none;margin-top:7px;background:#eff6ff;color:#1e40af;padding:8px 9px;border-radius:8px;font-size:10px}.alert{display:none;margin-top:7px;border-radius:8px;padding:8px 9px;font-size:10px;line-height:1.45}.alert.info{background:#eff6ff;color:#1e40af}.alert.error{background:#fff1f2;color:#9f1239}.routebar{display:flex;justify-content:space-between;align-items:center;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid #edf1f5}.routebar strong{font-size:15px}.routeactions{display:flex;gap:4px}.route{margin-top:7px;max-height:430px;overflow:auto;padding-right:3px}.empty{padding:24px 9px;text-align:center;color:#98a2b3;border:1px dashed #d7dee7;border-radius:9px;font-size:10px}.stop{display:grid;grid-template-columns:54px 18px 1fr;gap:5px}.clock{font-size:11px;font-weight:950;color:var(--blue);text-align:right;padding-top:10px}.track{display:flex;flex-direction:column;align-items:center}.dot{width:9px;height:9px;border-radius:50%;background:var(--blue);margin-top:11px;z-index:2}.line{width:2px;background:#d0d5dd;flex:1;min-height:34px}.stop:last-child .line{display:none}.stopbody{border:1px solid #e2e8f0;border-radius:8px;padding:7px 8px;margin-bottom:4px;background:#fff}.stopbody.draggable{cursor:grab}.stopbody.dragging{opacity:.45}.stophead{display:flex;justify-content:space-between;gap:6px;align-items:center}.name{font-weight:950;font-size:11px}.addr{font-size:9px;color:#667085;margin-top:2px;line-height:1.35}.tags{margin-top:4px}.tag{display:inline-block;border-radius:999px;padding:2px 5px;font-size:8px;font-weight:900;margin:0 2px 2px 0}.t60{background:#e8f0ff;color:#1d4ed8}.t40{background:#fff2e2;color:#b45309}.center{background:#eef4fb;color:var(--navy)}.move{background:#ecfdf5;color:#166534}.blocked{background:#fee2e2;color:#991b1b}.pref{background:#f3e8ff;color:#7e22ce}.miss{background:#fff1f2;color:#be123c}.waittag{background:#fef3c7;color:#92400e}.fixed{background:#dbeafe;color:#1e3a8a}.buffer{background:#f1f5f9;color:#475569}.leg{margin:-1px 0 3px 72px;border-left:2px dashed #d0d5dd;padding:3px 6px;color:#667085;font-size:9px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}.sum{background:#f7f9fb;border-radius:7px;padding:7px}.sum .k{font-size:9px;color:#667085}.sum .v{font-size:12px;font-weight:950;margin-top:2px}.unassigned{display:none;margin-top:8px;border:1px solid #fecaca;background:#fff7f7;border-radius:8px;padding:8px}.unassigned h3{font-size:11px;margin:0 0 5px;color:#991b1b}.unassigned-item{font-size:9px;color:#7f1d1d;margin-top:3px}.mapbox{margin-top:8px;border-top:1px solid #edf1f5;padding-top:8px}.maphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.maphead strong{font-size:11px}.maphead span{font-size:9px;color:#667085}#map{height:265px;border:1px solid #dce3ea;border-radius:9px;background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#98a2b3;font-size:10px}.historyrow{display:grid;grid-template-columns:1fr auto;gap:5px;margin-top:7px}.historyrow select{width:100%;font-size:10px;min-height:32px}.modalback{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:50}.modalback.open{display:flex}.modal{width:980px;max-height:88vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 25px 70px rgba(15,23,42,.28)}.modalhead{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #e5eaf0}.modalhead h3{margin:0;font-size:18px}.modalbody{padding:13px 16px}.rulegrid{display:grid;grid-template-columns:54px 70px 110px 160px 1fr 78px;gap:6px;align-items:center;margin-bottom:6px}.rulegrid.head{font-size:10px;color:#667085;font-weight:900}.rulegrid input{min-height:32px;font-size:10px}.rule-day{font-size:12px;font-weight:950}.switchline{display:flex;align-items:center;gap:5px;font-size:10px}.switchline input{width:16px;height:16px;min-height:0}.skipdates{display:grid;grid-template-columns:130px 1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #edf1f5;align-items:center}.skipdates label{font-size:11px;font-weight:900}.modalfoot{display:flex;justify-content:flex-end;gap:6px;padding:11px 16px;border-top:1px solid #e5eaf0}.settings-note{font-size:9px;color:#667085;margin-top:4px;line-height:1.4}
+@media print{html,body{min-width:0;background:#fff}.app{width:100%;max-width:none;margin:0}.topbar{background:#fff;color:#000;box-shadow:none;border:0;padding:0 0 10px}.brand p,.statuses,.settings,.leftcol,.make,.plan-top,.dayrow,.alert,.progress,.routeactions,.historyrow,.mapbox{display:none!important}.main{display:block;margin:0}.right{position:static;border:0;box-shadow:none}.route{max-height:none;overflow:visible}.stopbody{break-inside:avoid}.summary{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
 <div class="app">
-  <section class="topbar">
-    <div class="brand">
-      <h1>조은 방문목욕 동선표</h1>
-      <p>PC 전용 · 어르신 일정 제약 + TMAP 자동차 이동시간 기준</p>
-    </div>
-    <div class="statuses">
-      <span class="pill" id="dbPill">저장 확인중</span>
-      <span class="pill warn" id="backupPill">PC 백업 미연결</span>
-      <span class="pill" id="tmapPill">TMAP 미확인</span>
-          </div>
-  </section>
-
-  <section class="toolbar">
-    <div class="toolbox">
-      <label>센터 출발·복귀 주소</label>
-      <div class="inline"><input id="centerAddress" value="" placeholder="센터 주소"></div>
-    </div>
-    <div class="toolbox">
-      <label>TMAP AppKey</label>
-      <div class="inline"><input id="appKey" type="password" placeholder="AppKey를 한 번 입력"></div>
-    </div>
-    <div class="toolbox backupbox">
-      <button class="btn primary" id="connectBackup" type="button">PC 백업 연결</button>
-      <button class="btn" id="restoreBackup" type="button">백업 불러오기</button>
-      <button class="btn" id="downloadBackup" type="button">백업 다운로드</button>
-    </div>
-  </section>
-
-  <main class="main">
-    <section class="card">
-      <div class="cardhead">
-        <div>
-          <h2>어르신 명단</h2>
-          <div class="sub">입력 즉시 저장 · 요일/희망시간/불가시간까지 함께 보관</div>
-        </div>
-        <div class="sub" id="saveText">저장 준비</div>
-      </div>
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="namecol">이름</th>
-              <th class="addrcol">주소</th>
-              <th class="dayscol">가능요일</th>
-              <th class="prefcol">희망시간대</th>
-              <th class="minscol">목욕</th>
-              <th class="blockcol">불가시간</th>
-              <th class="delcol"></th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-      <div class="tablefoot">
-        <button class="add" id="add" type="button">+ 어르신 추가</button>
-        <div class="help">희망시간대: <b>10:00-12:00</b> · 불가시간: <b>09:00-11:00 / 14:00-15:30</b></div>
-      </div>
-      <div class="storage-note">
-        저장 방식: 브라우저 내부 저장소(IndexedDB) 한 곳에 자동저장합니다.
-        PC 백업 파일이 연결된 경우 수정할 때마다 파일에도 자동저장하며, 브라우저 데이터가 비어 있을 때는 백업 파일을 임의로 덮어쓰지 않습니다.
-      </div>
-    </section>
-
-    <aside class="card right">
-      <div class="planbox">
-        <div class="cardhead" style="padding:0 0 9px">
-          <div>
-            <h2>동선 만들기</h2>
-            <div class="sub">월~토 · 센터 09:00 출발 · 12:00~13:00 점심 제외</div>
-          </div>
-        </div>
-        <div class="dayrow" id="days"></div>
-        <button class="make" id="make" type="button">월요일 최적 동선 만들기</button>
-        <div class="alert info" id="info"></div>
-        <div class="alert error" id="error"></div>
-
-        <div class="routehead">
-          <strong id="routeTitle">월요일 시간별 동선</strong>
-          <span id="routeMeta">동선 생성 전</span>
-        </div>
-        <div class="route empty" id="route">어르신을 입력하고 요일을 선택한 뒤 동선을 만들어주세요.</div>
-
-        <div class="summary">
-          <div class="sum"><div class="k">방문 건수</div><div class="v" id="sumCases">0건</div></div>
-          <div class="sum"><div class="k">총 목욕시간</div><div class="v" id="sumService">0분</div></div>
-          <div class="sum"><div class="k">총 이동시간</div><div class="v" id="sumTravel">0분</div></div>
-          <div class="sum"><div class="k">센터 복귀 예상</div><div class="v" id="sumEnd">-</div></div>
-        </div>
-      </div>
-    </aside>
-  </main>
-</div>
-
+<section class="topbar"><div class="brand"><h1>조은 방문목욕 동선표</h1><p>PC용 · 고정시간 / 희망시간 / 불가시간 / 실제 도로 이동시간을 함께 반영</p></div><div class="statuses"><span class="pill" id="dbPill">저장 확인중</span><span class="pill warn" id="backupPill">PC 백업 미연결</span><span class="pill" id="tmapPill">TMAP 미확인</span></div></section>
+<section class="settings"><div class="box"><label>센터 출발·복귀 주소</label><div class="row"><input id="centerAddress" placeholder="센터 주소"></div></div><div class="box"><label>TMAP AppKey</label><div class="row"><input id="appKey" type="password" placeholder="AppKey 입력"></div></div><div class="box"><label>운행 시간 설정</label><div class="timegrid"><label>출발<input id="startTime" type="time"></label><label>점심 시작<input id="lunchStart" type="time"></label><label>점심 종료<input id="lunchEnd" type="time"></label><label>센터 복귀<input id="endTime" type="time"></label><label>정리시간(분)<input id="bufferMins" type="number" min="0" max="60"></label></div><div class="settings-note">점심을 사용하지 않으려면 시작·종료를 비워두면 됩니다. 정리시간은 각 목욕 후 출발 전 여유시간입니다.</div></div><div class="box backupbox"><button class="btn primary" id="connectBackup">PC 백업 연결</button><button class="btn" id="restoreBackup">백업 불러오기</button><button class="btn" id="downloadBackup">백업 다운로드</button></div></section>
+<main class="main"><section class="card leftcol"><div class="cardhead"><div><h2>어르신 명단</h2><div class="sub">요일 체크 후 ‘일정 설정’에서 요일별 고정/희망/불가시간을 입력</div></div><div class="sub" id="saveText">저장 준비</div></div><div class="tablewrap"><table><thead><tr><th class="namecol">이름</th><th class="addrcol">주소</th><th class="statuscol">주소상태</th><th class="dayscol">가능요일</th><th class="minscol">목욕</th><th class="pausecol">중지</th><th class="detailcol">일정</th><th class="delcol"></th></tr></thead><tbody id="rows"></tbody></table></div><div class="tablefoot"><button class="add" id="add">+ 어르신 추가</button><div class="help">고정시간은 반드시 맞춰야 하는 일정 · 희망시간은 우선 배치 · 불가시간은 절대 배치 안 함</div></div></section><aside class="card right"><div class="planbox"><div class="cardhead" style="padding:0 0 8px"><div><h2>동선 만들기</h2><div class="sub">선택 날짜의 일시제외까지 반영 · 하루 동선 후보를 폭넓게 비교해 편성</div></div></div><div class="plan-top"><div><label>계획 날짜</label><input id="planDate" type="date" style="width:100%"></div><div><label>요일</label><div class="dayrow" id="days"></div></div></div><button class="make" id="make">월요일 동선 최적화</button><div class="progress" id="progress"></div><div class="alert info" id="info"></div><div class="alert error" id="error"></div><div class="routebar"><strong id="routeTitle">월요일 시간별 동선</strong><div class="routeactions"><button class="mini detail" id="savePlan">동선 저장</button><button class="mini" id="printPlan">인쇄</button></div></div><div class="route empty" id="route">어르신을 입력하고 날짜·요일을 선택한 뒤 동선을 만들어주세요.</div><div class="summary"><div class="sum"><div class="k">방문 건수</div><div class="v" id="sumCases">0건</div></div><div class="sum"><div class="k">총 목욕시간</div><div class="v" id="sumService">0분</div></div><div class="sum"><div class="k">총 이동시간</div><div class="v" id="sumTravel">0분</div></div><div class="sum"><div class="k">센터 복귀</div><div class="v" id="sumEnd">-</div></div></div><div class="unassigned" id="unassigned"><h3 id="unassignedTitle">미배정</h3><div id="unassignedList"></div></div><div class="historyrow"><select id="historySelect"><option value="">저장된 동선 불러오기</option></select><button class="mini" id="loadHistory">불러오기</button></div><div class="mapbox"><div class="maphead"><strong>동선 지도</strong><span>번호 순서대로 표시</span></div><div id="map">동선을 만들면 지도가 표시됩니다.</div></div></div></aside></main></div>
+<div class="modalback" id="scheduleModal"><div class="modal"><div class="modalhead"><h3 id="modalTitle">요일별 일정 설정</h3><button class="btn" id="closeModal">닫기</button></div><div class="modalbody"><div class="rulegrid head"><div>요일</div><div>사용</div><div>고정시간</div><div>희망시간대</div><div>불가시간</div><div>요일중지</div></div><div id="ruleRows"></div><div class="skipdates"><label>일시 제외 날짜</label><input id="skipDates" placeholder="예: 2026-08-21, 2026-08-28"><div></div><div class="sub">해당 날짜에만 자동으로 제외됩니다. 여러 날짜는 쉼표로 구분하세요.</div></div></div><div class="modalfoot"><button class="btn primary" id="saveRules">저장</button></div></div></div>
 <script>
 const WEEK=['월','화','수','목','금','토'];
+const WEEK_JS={0:null,1:'월',2:'화',3:'수',4:'목',5:'금',6:'토'};
 const DEFAULT_CENTER='전북특별자치도 전주시 완산구 용머리로 20-1';
-const OLD_DATA_KEY='joeun_bath_route_clients_v3';
-const OLD_SET_KEY='joeun_bath_route_settings_v3';
-const DB_NAME='joeunBathRoutePCDB';
-const DB_VERSION=2;
-let selectedDay='월', state=null, db=null, backupHandle=null, saveTimer=null, fileTimer=null;
-const $=id=>document.getElementById(id), rows=$('rows');
+const DB_NAME='joeunBathRoutePCDB';const DB_VERSION=3;
+const OLD_DATA_KEY='joeun_bath_route_clients_v3',OLD_SET_KEY='joeun_bath_route_settings_v3';
+let db=null,state=null,selectedDay='월',editingClientId=null,backupHandle=null,saveTimer=null,fileTimer=null,currentPlan=null,lastMatrix=null,mapInstance=null,mapObjects=[],tmapSdkPromise=null;
+const $=id=>document.getElementById(id),rows=$('rows');
 const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const now=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
-
-function blankState(){
-  return {version:2,updatedAt:new Date().toISOString(),clients:[],settings:{centerAddress:DEFAULT_CENTER,appKey:''}};
-}
-function normalizeClient(c={}){
-  let preferred=(c.preferred||'').trim();
-  if(!preferred && c.wish==='오전') preferred='09:00-12:00';
-  if(!preferred && c.wish==='오후') preferred='13:00-17:00';
-  return {
-    id:c.id||('c'+Date.now()+Math.random().toString(16).slice(2)),
-    name:c.name||'',address:c.address||'',
-    days:Array.isArray(c.days)&&c.days.length?c.days:['월'],
-    preferred,mins:Number(c.mins)===40?40:60,blocked:c.blocked||''
-  };
-}
-function normalizeState(s){
-  const out=blankState();
-  if(s&&Array.isArray(s.clients)) out.clients=s.clients.map(normalizeClient);
-  if(s&&s.settings) out.settings={
-    centerAddress:s.settings.centerAddress||DEFAULT_CENTER,
-    appKey:s.settings.appKey||''
-  };
-  out.updatedAt=s?.updatedAt||s?.savedAt||new Date().toISOString();
-  return out;
-}
-function hasMeaningfulData(s){
-  return !!(s && ((s.clients||[]).some(c=>c.name||c.address) || s.settings?.appKey));
-}
-function dbOpen(){
-  return new Promise((resolve,reject)=>{
-    const r=indexedDB.open(DB_NAME,DB_VERSION);
-    r.onupgradeneeded=()=>{
-      const d=r.result;
-      if(!d.objectStoreNames.contains('state')) d.createObjectStore('state');
-      if(!d.objectStoreNames.contains('handles')) d.createObjectStore('handles');
-    };
-    r.onsuccess=()=>resolve(r.result);
-    r.onerror=()=>reject(r.error);
-  });
-}
-function idbGet(store,key){
-  return new Promise((resolve,reject)=>{
-    const r=db.transaction(store,'readonly').objectStore(store).get(key);
-    r.onsuccess=()=>resolve(r.result||null); r.onerror=()=>reject(r.error);
-  });
-}
-function idbPut(store,key,val){
-  return new Promise((resolve,reject)=>{
-    const tx=db.transaction(store,'readwrite');
-    tx.objectStore(store).put(val,key);
-    tx.oncomplete=()=>resolve(); tx.onerror=()=>reject(tx.error);
-  });
-}
-async function loadInitialState(){
-  let s=null;
-  try{s=await idbGet('state','main')}catch(e){console.warn(e)}
-  if(!s){
-    let oldClients=[],oldSettings={};
-    try{oldClients=JSON.parse(localStorage.getItem(OLD_DATA_KEY)||'[]')}catch(e){}
-    try{oldSettings=JSON.parse(localStorage.getItem(OLD_SET_KEY)||'{}')}catch(e){}
-    if(oldClients.length || oldSettings.appKey || oldSettings.centerAddress){
-      s={clients:oldClients,settings:oldSettings};
-    }
-  }
-  return normalizeState(s||blankState());
-}
-async function requestPersistentStorage(){
-  if(!navigator.storage?.persist) return false;
-  try{
-    const already=await navigator.storage.persisted();
-    if(already) return true;
-    return await navigator.storage.persist();
-  }catch(e){return false}
-}
-function readRows(){
-  return [...rows.querySelectorAll('tr')].map(tr=>({
-    id:tr.dataset.id,
-    name:tr.querySelector('.n').value.trim(),
-    address:tr.querySelector('.a').value.trim(),
-    days:[...tr.querySelectorAll('.day-cb:checked')].map(x=>x.value),
-    preferred:tr.querySelector('.p').value.trim(),
-    mins:Number(tr.querySelector('.m').value)||60,
-    blocked:tr.querySelector('.b').value.trim()
-  }));
-}
-function pullStateFromUI(){
-  state.clients=readRows();
-  state.settings.centerAddress=$('centerAddress').value.trim()||DEFAULT_CENTER;
-  state.settings.appKey=$('appKey').value.trim();
-  state.updatedAt=new Date().toISOString();
-}
-async function saveState(){
-  pullStateFromUI();
-  try{
-    await idbPut('state','main',state);
-    $('dbPill').textContent='저장됨 '+now();
-    $('dbPill').className='pill ok';
-    $('saveText').textContent='저장됨 '+now();
-  }catch(e){
-    console.error(e);
-    $('dbPill').textContent='저장 오류';
-    $('dbPill').className='pill bad';
-  }
-  queueFileWrite();
-}
-function queueSave(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(saveState,180);
-}
-function addRow(c={}){
-  c=normalizeClient(c);
-  const tr=document.createElement('tr'); tr.dataset.id=c.id;
-  tr.innerHTML=`
-    <td><input class="n" value="${esc(c.name)}" placeholder="이름"></td>
-    <td><input class="a" value="${esc(c.address)}" placeholder="도로명주소"></td>
-    <td><div class="daychecks">${WEEK.map(d=>`<label class="daycheck"><input class="day-cb" type="checkbox" value="${d}" ${c.days.includes(d)?'checked':''}><span>${d}</span></label>`).join('')}</div></td>
-    <td><input class="p" value="${esc(c.preferred)}" placeholder="10:00-12:00"></td>
-    <td><select class="m"><option value="60" ${c.mins===60?'selected':''}>60분</option><option value="40" ${c.mins===40?'selected':''}>40분</option></select></td>
-    <td><input class="b" value="${esc(c.blocked)}" placeholder="09:00-11:00 / 14:00-15:30"></td>
-    <td><button class="del" type="button">삭제</button></td>`;
-  tr.querySelectorAll('input,select').forEach(el=>{
-    el.addEventListener('input',queueSave); el.addEventListener('change',queueSave);
-  });
-  tr.querySelector('.del').onclick=()=>{tr.remove();queueSave()};
-  rows.appendChild(tr);
-}
-function renderState(){
-  $('centerAddress').value=state.settings.centerAddress||DEFAULT_CENTER;
-  $('appKey').value=state.settings.appKey||'';
-  rows.innerHTML='';
-  if(state.clients.length) state.clients.forEach(addRow);
-  else addRow({days:['월'],mins:60});
-  $('tmapPill').textContent=state.settings.appKey?'TMAP 키 저장됨':'TMAP 미확인';
-  $('tmapPill').className='pill';
-}
-function showInfo(t){$('info').style.display='block';$('info').textContent=t;setTimeout(()=>{$('info').style.display='none'},4200)}
-function showError(t){$('error').style.display='block';$('error').textContent=t}
-function hideError(){$('error').style.display='none'}
-
-async function readHandleFile(handle){
-  const f=await handle.getFile();
-  const txt=await f.text();
-  return normalizeState(JSON.parse(txt));
-}
-async function writeHandleFile(handle,snapshot){
-  const w=await handle.createWritable();
-  await w.write(JSON.stringify(snapshot,null,2));
-  await w.close();
-}
-async function getHandlePermission(handle){
-  try{return await handle.queryPermission({mode:'readwrite'})}catch(e){return 'denied'}
-}
-async function syncWithBackupOnLoad(){
-  try{
-    backupHandle=await idbGet('handles','main');
-    if(!backupHandle) return;
-    const p=await getHandlePermission(backupHandle);
-    if(p!=='granted'){
-      $('backupPill').textContent='백업 재연결 필요';
-      $('backupPill').className='pill warn';
-      return;
-    }
-    let fileState=null;
-    try{fileState=await readHandleFile(backupHandle)}catch(e){console.warn(e)}
-    if(fileState && hasMeaningfulData(fileState)){
-      const ft=Date.parse(fileState.updatedAt||0)||0;
-      const bt=Date.parse(state.updatedAt||0)||0;
-      if(!hasMeaningfulData(state) || ft>bt){
-        state=fileState;
-        await idbPut('state','main',state);
-            renderState();
-        showInfo('PC 백업 파일의 최신 데이터를 자동 복구했습니다.');
-      }else if(bt>ft){
-        await writeHandleFile(backupHandle,state);
-      }
-    }else if(hasMeaningfulData(state)){
-      await writeHandleFile(backupHandle,state);
-    }
-    $('backupPill').textContent='PC 백업 연결됨';
-    $('backupPill').className='pill ok';
-  }catch(e){
-    console.warn(e);
-    $('backupPill').textContent='백업 확인 필요';
-    $('backupPill').className='pill warn';
-  }
-}
-function queueFileWrite(){
-  if(!backupHandle || !hasMeaningfulData(state)) return;
-  clearTimeout(fileTimer);
-  fileTimer=setTimeout(async()=>{
-    const p=await getHandlePermission(backupHandle);
-    if(p!=='granted'){
-      $('backupPill').textContent='백업 재연결 필요';
-      $('backupPill').className='pill warn';
-      return;
-    }
-    try{
-      await writeHandleFile(backupHandle,state);
-      $('backupPill').textContent='PC 백업 '+now();
-      $('backupPill').className='pill ok';
-    }catch(e){
-      console.warn(e);
-      $('backupPill').textContent='백업 실패';
-      $('backupPill').className='pill bad';
-    }
-  },450);
-}
-$('connectBackup').onclick=async()=>{
-  hideError();
-  if(!('showSaveFilePicker' in window)){
-    showError('PC 자동백업은 최신 Chrome 또는 Edge에서 사용할 수 있습니다. 대신 백업 다운로드를 사용하세요.');
-    return;
-  }
-  try{
-    await requestPersistentStorage();
-    if(backupHandle){
-      let p=await getHandlePermission(backupHandle);
-      if(p!=='granted') p=await backupHandle.requestPermission({mode:'readwrite'});
-      if(p==='granted'){
-        const fileState=await readHandleFile(backupHandle).catch(()=>null);
-        if(fileState && hasMeaningfulData(fileState)){
-          const ft=Date.parse(fileState.updatedAt||0)||0, bt=Date.parse(state.updatedAt||0)||0;
-          if(!hasMeaningfulData(state) || ft>bt){
-            state=fileState; await idbPut('state','main',state);
-            renderState();
-          }else{
-            await writeHandleFile(backupHandle,state);
-          }
-        }else if(hasMeaningfulData(state)){
-          await writeHandleFile(backupHandle,state);
-        }
-        $('backupPill').textContent='PC 백업 연결됨';
-        $('backupPill').className='pill ok';
-        showInfo('PC 백업 파일 연결을 확인했습니다.');
-        return;
-      }
-    }
-    backupHandle=await showSaveFilePicker({
-      suggestedName:'조은_방문목욕_동선데이터.json',
-      startIn:'documents',
-      types:[{description:'JSON 백업 파일',accept:{'application/json':['.json']}}]
-    });
-    await idbPut('handles','main',backupHandle);
-    if(hasMeaningfulData(state)) await writeHandleFile(backupHandle,state);
-    $('backupPill').textContent='PC 백업 연결됨';
-    $('backupPill').className='pill ok';
-    showInfo('PC 백업 파일을 연결했습니다. 이후 수정사항은 자동 저장됩니다.');
-  }catch(e){
-    if(e.name!=='AbortError') showError('백업 연결에 실패했습니다: '+e.message);
-  }
-};
-$('restoreBackup').onclick=async()=>{
-  hideError();
-  if(!('showOpenFilePicker' in window)){
-    showError('최신 Chrome 또는 Edge에서 백업 파일을 직접 불러올 수 있습니다.');
-    return;
-  }
-  try{
-    const [h]=await showOpenFilePicker({startIn:'documents',types:[{description:'JSON 백업 파일',accept:{'application/json':['.json']}}]});
-    const restored=await readHandleFile(h);
-    if(!hasMeaningfulData(restored) && !confirm('백업 파일에 입력 데이터가 거의 없습니다. 그래도 불러올까요?')) return;
-    state=restored;
-    backupHandle=h;
-    await idbPut('handles','main',h);
-    await idbPut('state','main',state);
-    renderState();
-    $('backupPill').textContent='PC 백업 연결됨';
-    $('backupPill').className='pill ok';
-    showInfo('백업 파일에서 복구했습니다.');
-  }catch(e){
-    if(e.name!=='AbortError') showError('백업 복구에 실패했습니다: '+e.message);
-  }
-};
-$('downloadBackup').onclick=()=>{
-  pullStateFromUI();
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='조은_방문목욕_동선데이터_백업.json';a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),700);
-};
-$('centerAddress').addEventListener('input',queueSave);
-$('centerAddress').addEventListener('change',queueSave);
-$('appKey').addEventListener('input',queueSave);
-$('appKey').addEventListener('change',queueSave);
-$('add').onclick=()=>{addRow({days:[selectedDay],mins:60});queueSave()};
-
-function minToHm(v){return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
-function parseRange(text){
-  if(!text) return null;
-  const m=String(text).trim().match(/^(\d{1,2})(?::(\d{2}))?\s*[-~]\s*(\d{1,2})(?::(\d{2}))?$/);
-  if(!m) return null;
-  const a=Number(m[1])*60+Number(m[2]||0), b=Number(m[3])*60+Number(m[4]||0);
-  return b>a?[a,b]:null;
-}
-function parseBlocked(text){
-  if(!text) return [];
-  const out=[];
-  for(const part of String(text).split(/[\/,\n]+/)){
-    const r=parseRange(part);
-    if(r) out.push(r);
-  }
-  return out.sort((a,b)=>a[0]-b[0]);
-}
-function avoidBlocks(start,mins,blocks){
-  let s=start;
-  for(let guard=0;guard<20;guard++){
-    let moved=false;
-    for(const [a,b] of blocks){
-      if(s<b && s+mins>a){s=b;moved=true;break}
-    }
-    if(!moved) break;
-  }
-  return s;
-}
-function evaluateStart(arrival,c){
-  const blocks=[[720,780],...parseBlocked(c.blocked)];
-  const pref=parseRange(c.preferred);
-  let start=avoidBlocks(arrival,c.mins,blocks);
-  if(pref && start<pref[0]){
-    const atPref=avoidBlocks(pref[0],c.mins,blocks);
-    if(atPref+c.mins<=pref[1]) start=atPref;
-  }
-  const withinPref=!pref || (start>=pref[0] && start+c.mins<=pref[1]);
-  let deviation=0;
-  if(pref && !withinPref){
-    if(start<pref[0]) deviation=pref[0]-start;
-    else deviation=Math.max(0,start-pref[1]);
-  }
-  return {start,wait:Math.max(0,start-arrival),withinPref,deviation,pref};
-}
-const travelMemo=new Map();
-function coordCache(){try{return JSON.parse(localStorage.getItem('joeun_bath_route_coords_v4'))||{}}catch(e){return{}}}
-function saveCoordCache(v){try{localStorage.setItem('joeun_bath_route_coords_v4',JSON.stringify(v))}catch(e){}}
-async function geocode(address,key){
-  const cache=coordCache(); if(cache[address]) return cache[address];
-  const qs=new URLSearchParams({version:'1',format:'json',coordType:'WGS84GEO',fullAddr:address,addressFlag:'F00',page:'1',count:'20',appKey:key});
-  const r=await fetch('https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?'+qs);
-  const j=await r.json();
-  if(!r.ok||j.error) throw new Error('주소 확인 실패: '+address);
-  const arr=j?.coordinateInfo?.coordinate||[], f=Array.isArray(arr)?arr[0]:arr;
-  const lon=Number(f?.newLon??f?.lon),lat=Number(f?.newLat??f?.lat);
-  if(!Number.isFinite(lon)||!Number.isFinite(lat)) throw new Error('좌표를 찾지 못했습니다: '+address);
-  cache[address]={lon,lat};saveCoordCache(cache);return cache[address];
-}
-async function driveTime(from,to,key){
-  const k=`${from.lon},${from.lat}>${to.lon},${to.lat}`;
-  if(travelMemo.has(k)) return travelMemo.get(k);
-  const qs=new URLSearchParams({version:'1',format:'json',startX:String(from.lon),startY:String(from.lat),endX:String(to.lon),endY:String(to.lat),reqCoordType:'WGS84GEO',resCoordType:'WGS84GEO',searchOption:'0',startName:'출발',endName:'도착'});
-  const r=await fetch('https://apis.openapi.sk.com/tmap/routes?'+qs,{headers:{appKey:key}});
-  const j=await r.json();
-  if(!r.ok||j.error) throw new Error('TMAP 자동차 이동시간 계산에 실패했습니다.');
-  let sec=0;
-  if(Array.isArray(j.features)) for(const f of j.features){const t=Number(f?.properties?.totalTime);if(t>0)sec=t}
-  if(!sec) throw new Error('TMAP 이동시간 응답을 읽지 못했습니다.');
-  const m=Math.max(1,Math.round(sec/60));travelMemo.set(k,m);return m;
-}
-async function makeSchedule(center,clients,key){
-  let clock=540,totalTravel=0,service=0,prev=center;
-  const left=[...clients];
-  const stops=[{name:'센터 출발',address:state.settings.centerAddress,time:clock,center:true}];
-  while(left.length){
-    let best=null;
-    for(let i=0;i<left.length;i++){
-      const c=left[i],tr=await driveTime(prev,c.coord,key),arrival=clock+tr;
-      const ev=evaluateStart(arrival,c);
-      const preferencePenalty=ev.withinPref?0:600+ev.deviation*4;
-      const waitPenalty=ev.wait*.3;
-      const score=ev.start + preferencePenalty + waitPenalty + tr*.08;
-      if(!best || score<best.score || (score===best.score&&tr<best.tr)) best={i,c,tr,score,...ev};
-    }
-    const c=left.splice(best.i,1)[0];
-    totalTravel+=best.tr; clock=best.start;
-    stops.push({...c,time:clock,travel:best.tr,wait:best.wait,withinPref:best.withinPref});
-    clock+=c.mins; service+=c.mins; prev=c.coord;
-  }
-  const back=await driveTime(prev,center,key);totalTravel+=back;clock+=back;
-  stops.push({name:'센터 복귀',address:state.settings.centerAddress,time:clock,travel:back,center:true});
-  return {stops,totalTravel,service,end:clock};
-}
-function renderRoute(res){
-  let h='';
-  res.stops.forEach((s,i)=>{
-    if(i>0) h+=`<div class="leg">↓ 이동 <strong>${s.travel}분</strong>${s.wait?` · 대기 ${s.wait}분`:''}</div>`;
-    h+=`<div class="stop">
-      <div class="clock">${minToHm(s.time)}</div>
-      <div class="track"><span class="dot"></span><span class="line"></span></div>
-      <div class="stopbody">
-        <div class="name">${esc(s.name)}</div>
-        <div class="addr">${esc(s.address)}</div>
-        <div class="tags">
-          ${s.center?'<span class="tag center">센터</span>':`<span class="tag ${s.mins===40?'t40':'t60'}">${s.mins}분 목욕</span>`}
-          ${s.travel?`<span class="tag move">이동 ${s.travel}분</span>`:''}
-          ${s.preferred?`<span class="tag pref">희망 ${esc(s.preferred)}</span>`:''}
-          ${s.preferred&&!s.withinPref?'<span class="tag miss">희망시간 벗어남</span>':''}
-          ${s.blocked?`<span class="tag blocked">불가 ${esc(s.blocked)}</span>`:''}
-          ${s.wait?`<span class="tag wait">대기 ${s.wait}분</span>`:''}
-        </div>
-      </div>
-    </div>`;
-  });
-  $('route').className='route';$('route').innerHTML=h;
-  $('sumCases').textContent=(res.stops.length-2)+'건';
-  $('sumService').textContent=res.service+'분';
-  $('sumTravel').textContent=res.totalTravel+'분';
-  $('sumEnd').textContent=minToHm(res.end);
-  $('routeMeta').textContent='TMAP 도로시간 + 일정제약';
-}
-function initDays(){
-  WEEK.forEach(d=>{
-    const b=document.createElement('button');b.type='button';
-    b.className='daybtn'+(d==='월'?' active':'');b.textContent=d;
-    b.onclick=()=>{
-      selectedDay=d;
-      [...$('days').children].forEach(x=>x.classList.remove('active'));b.classList.add('active');
-      $('make').textContent=d+'요일 최적 동선 만들기';$('routeTitle').textContent=d+'요일 시간별 동선';
-    };
-    $('days').appendChild(b);
-  });
-}
-$('make').onclick=async()=>{
-  hideError();travelMemo.clear();await saveState();
-  const clients=state.clients.filter(c=>c.days.includes(selectedDay));
-  if(!clients.length){showError(selectedDay+'요일 가능한 어르신이 없습니다.');return}
-  if(clients.some(c=>!c.address)){showError('주소가 비어 있는 어르신이 있습니다.');return}
-  if(!state.settings.appKey){showError('TMAP AppKey를 입력해야 합니다.');return}
-  $('make').disabled=true;$('make').textContent='계산 중...';
-  try{
-    const center=await geocode(state.settings.centerAddress,state.settings.appKey);
-    for(const c of clients)c.coord=await geocode(c.address,state.settings.appKey);
-    const res=await makeSchedule(center,clients,state.settings.appKey);
-    renderRoute(res);
-    $('tmapPill').textContent='TMAP 연결 정상';$('tmapPill').className='pill ok';
-    showInfo('실제 자동차 이동시간과 희망/불가시간을 반영했습니다.');
-  }catch(e){
-    console.error(e);$('tmapPill').textContent='TMAP 확인 필요';$('tmapPill').className='pill bad';
-    showError(e.message||'동선을 만들지 못했습니다.');
-  }finally{
-    $('make').disabled=false;$('make').textContent=selectedDay+'요일 최적 동선 만들기';
-  }
-};
-
-async function init(){
-  initDays();
-  try{
-    db=await dbOpen();
-    state=await loadInitialState();
-    renderState();
-    const persistent=await requestPersistentStorage();
-    $('dbPill').textContent='브라우저 저장';
-    $('dbPill').className='pill ok';
-    await idbPut('state','main',state);
-    await syncWithBackupOnLoad();
-  }catch(e){
-    console.error(e);
-    state=normalizeState(blankState());renderState();
-    $('dbPill').textContent='저장 확인 필요';$('dbPill').className='pill bad';
-  }
-}
-init();
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function blankRule(enabled=false){return{enabled,fixed:'',preferred:'',blocked:'',paused:false}}
+function todayISO(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function blankState(){return{version:3,updatedAt:new Date().toISOString(),clients:[],settings:{centerAddress:DEFAULT_CENTER,appKey:'',startTime:'09:00',lunchStart:'12:00',lunchEnd:'13:00',endTime:'18:00',bufferMins:10,planDate:todayISO()},history:[]}}
+function normalizeClient(c={}){const rules={};for(const d of WEEK){const old=c.dayRules?.[d]||{};rules[d]={...blankRule((c.days||[]).includes(d)),...old};if(!c.dayRules&&rules[d].enabled){if(c.preferred)rules[d].preferred=c.preferred;if(c.blocked)rules[d].blocked=c.blocked;if(c.wish==='오전'&&!rules[d].preferred)rules[d].preferred='09:00-12:00';if(c.wish==='오후'&&!rules[d].preferred)rules[d].preferred='13:00-17:00'}}return{id:c.id||uid(),name:c.name||'',address:c.address||'',mins:Number(c.mins)===40?40:60,paused:!!c.paused,dayRules:rules,skipDates:Array.isArray(c.skipDates)?c.skipDates:[]}}
+function normalizeState(s){const out=blankState();if(s&&Array.isArray(s.clients))out.clients=s.clients.map(normalizeClient);if(s?.settings)out.settings={...out.settings,...s.settings,bufferMins:Number(s.settings.bufferMins??10)};if(Array.isArray(s?.history))out.history=s.history;out.updatedAt=s?.updatedAt||s?.savedAt||new Date().toISOString();return out}
+function hasMeaningfulData(s){return!!(s&&((s.clients||[]).some(c=>c.name||c.address)||s.settings?.appKey))}
+function dbOpen(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('state'))d.createObjectStore('state');if(!d.objectStoreNames.contains('handles'))d.createObjectStore('handles');if(!d.objectStoreNames.contains('coords'))d.createObjectStore('coords')};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function idbGet(store,key){return new Promise((resolve,reject)=>{const r=db.transaction(store,'readonly').objectStore(store).get(key);r.onsuccess=()=>resolve(r.result??null);r.onerror=()=>reject(r.error)})}
+function idbPut(store,key,val){return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).put(val,key);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}
+async function loadInitialState(){let s=await idbGet('state','main').catch(()=>null);if(!s){let oldClients=[],oldSettings={};try{oldClients=JSON.parse(localStorage.getItem(OLD_DATA_KEY)||'[]')}catch(e){}try{oldSettings=JSON.parse(localStorage.getItem(OLD_SET_KEY)||'{}')}catch(e){}if(oldClients.length||oldSettings.appKey||oldSettings.centerAddress)s={clients:oldClients,settings:oldSettings}}return normalizeState(s||blankState())}
+function readRowsIntoState(){for(const tr of rows.querySelectorAll('tr')){const c=state.clients.find(x=>x.id===tr.dataset.id);if(!c)continue;c.name=tr.querySelector('.n').value.trim();c.address=tr.querySelector('.a').value.trim();c.mins=Number(tr.querySelector('.m').value)||60;c.paused=tr.querySelector('.pause').checked;for(const cb of tr.querySelectorAll('.day-cb'))c.dayRules[cb.value].enabled=cb.checked}}
+function pullSettings(){state.settings.centerAddress=$('centerAddress').value.trim()||DEFAULT_CENTER;state.settings.appKey=$('appKey').value.trim();state.settings.startTime=$('startTime').value||'09:00';state.settings.lunchStart=$('lunchStart').value;state.settings.lunchEnd=$('lunchEnd').value;state.settings.endTime=$('endTime').value||'18:00';state.settings.bufferMins=Math.max(0,Number($('bufferMins').value)||0);state.settings.planDate=$('planDate').value||todayISO()}
+async function saveState(){readRowsIntoState();pullSettings();state.updatedAt=new Date().toISOString();try{await idbPut('state','main',state);$('dbPill').textContent='브라우저 저장 '+now();$('dbPill').className='pill ok';$('saveText').textContent='저장됨 '+now()}catch(e){console.error(e);$('dbPill').textContent='저장 오류';$('dbPill').className='pill bad'}queueFileWrite();renderHistory()}
+function queueSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveState,200)}
+function addClientRow(c){const tr=document.createElement('tr');tr.dataset.id=c.id;tr.innerHTML=`<td><input class="n" value="${esc(c.name)}" placeholder="이름"></td><td><input class="a" value="${esc(c.address)}" placeholder="도로명주소"></td><td><span class="addrstatus" id="st_${c.id}">미확인</span></td><td><div class="daychecks">${WEEK.map(d=>`<label class="daycheck"><input class="day-cb" type="checkbox" value="${d}" ${c.dayRules[d]?.enabled?'checked':''}><span>${d}</span></label>`).join('')}</div></td><td><select class="m"><option value="60" ${c.mins===60?'selected':''}>60분</option><option value="40" ${c.mins===40?'selected':''}>40분</option></select></td><td><label class="pausecheck"><input class="pause" type="checkbox" ${c.paused?'checked':''}></label></td><td><button class="mini detail scheduleBtn">일정 설정</button></td><td><button class="mini del delBtn">삭제</button></td>`;tr.querySelectorAll('input,select').forEach(el=>{el.addEventListener('input',queueSave);el.addEventListener('change',queueSave)});tr.querySelector('.a').addEventListener('blur',()=>validateAddress(c.id));tr.querySelector('.scheduleBtn').onclick=()=>openRules(c.id);tr.querySelector('.delBtn').onclick=()=>{if(!confirm('이 어르신을 삭제할까요?'))return;state.clients=state.clients.filter(x=>x.id!==c.id);tr.remove();queueSave()};rows.appendChild(tr)}
+function renderState(){const s=state.settings;$('centerAddress').value=s.centerAddress||DEFAULT_CENTER;$('appKey').value=s.appKey||'';$('startTime').value=s.startTime||'09:00';$('lunchStart').value=s.lunchStart??'12:00';$('lunchEnd').value=s.lunchEnd??'13:00';$('endTime').value=s.endTime||'18:00';$('bufferMins').value=Number(s.bufferMins??10);$('planDate').value=s.planDate||todayISO();rows.innerHTML='';if(!state.clients.length)state.clients.push(normalizeClient({dayRules:{월:{enabled:true}}}));state.clients.forEach(addClientRow);$('tmapPill').textContent=s.appKey?'TMAP 키 저장됨':'TMAP 미확인';$('tmapPill').className='pill';renderHistory()}
+function showInfo(t){$('info').style.display='block';$('info').textContent=t;setTimeout(()=>{$('info').style.display='none'},4200)}function showError(t){$('error').style.display='block';$('error').textContent=t}function hideError(){$('error').style.display='none'}function progress(t){$('progress').style.display=t?'block':'none';$('progress').textContent=t||''}
+['centerAddress','appKey','startTime','lunchStart','lunchEnd','endTime','bufferMins','planDate'].forEach(id=>{$(id).addEventListener('input',queueSave);$(id).addEventListener('change',queueSave)});$('planDate').addEventListener('change',()=>{const d=WEEK_JS[new Date($('planDate').value+'T12:00:00').getDay()];if(d){selectedDay=d;[...$('days').children].forEach(x=>x.classList.toggle('active',x.textContent===d));$('make').textContent=d+'요일 동선 최적화';$('routeTitle').textContent=d+'요일 시간별 동선'}});$('add').onclick=()=>{const c=normalizeClient({dayRules:{[selectedDay]:{enabled:true}}});state.clients.push(c);addClientRow(c);queueSave()};
+function openRules(id){readRowsIntoState();const c=state.clients.find(x=>x.id===id);if(!c)return;editingClientId=id;$('modalTitle').textContent=(c.name||'어르신')+' · 요일별 일정 설정';$('ruleRows').innerHTML='';for(const d of WEEK){const r=c.dayRules[d]||blankRule();const div=document.createElement('div');div.className='rulegrid';div.dataset.day=d;div.innerHTML=`<div class="rule-day">${d}</div><label class="switchline"><input class="re" type="checkbox" ${r.enabled?'checked':''}>사용</label><input class="rf" type="time" value="${esc(r.fixed)}"><input class="rp" value="${esc(r.preferred)}" placeholder="10:00-12:00"><input class="rb" value="${esc(r.blocked)}" placeholder="09:00-11:00 / 14:00-15:30"><label class="switchline"><input class="rpa" type="checkbox" ${r.paused?'checked':''}>중지</label>`;$('ruleRows').appendChild(div)}$('skipDates').value=(c.skipDates||[]).join(', ');$('scheduleModal').classList.add('open')}
+$('closeModal').onclick=()=>$('scheduleModal').classList.remove('open');$('scheduleModal').addEventListener('click',e=>{if(e.target===$('scheduleModal'))$('scheduleModal').classList.remove('open')});$('saveRules').onclick=()=>{const c=state.clients.find(x=>x.id===editingClientId);if(!c)return;for(const rr of $('ruleRows').children){const d=rr.dataset.day;c.dayRules[d]={enabled:rr.querySelector('.re').checked,fixed:rr.querySelector('.rf').value,preferred:rr.querySelector('.rp').value.trim(),blocked:rr.querySelector('.rb').value.trim(),paused:rr.querySelector('.rpa').checked}}c.skipDates=$('skipDates').value.split(',').map(x=>x.trim()).filter(Boolean);renderState();$('scheduleModal').classList.remove('open');queueSave()};
+function hm(s){if(!s)return null;const m=String(s).match(/^(\d{1,2}):(\d{2})$/);if(!m)return null;return Number(m[1])*60+Number(m[2])}function hmText(v){return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
+function parseRange(text){if(!text)return null;const m=String(text).trim().match(/^(\d{1,2})(?::(\d{2}))?\s*[-~]\s*(\d{1,2})(?::(\d{2}))?$/);if(!m)return null;const a=Number(m[1])*60+Number(m[2]||0),b=Number(m[3])*60+Number(m[4]||0);return b>a?[a,b]:null}
+function parseBlocks(text){if(!text)return[];const out=[];for(const part of String(text).split(/[\/,\n]+/)){const r=parseRange(part);if(r)out.push(r)}return out.sort((a,b)=>a[0]-b[0])}
+function lunchRange(){const a=hm(state.settings.lunchStart),b=hm(state.settings.lunchEnd);return a!=null&&b!=null&&b>a?[a,b]:null}
+function serviceBlocks(rule){const arr=parseBlocks(rule.blocked);const l=lunchRange();if(l)arr.push(l);return arr.sort((a,b)=>a[0]-b[0])}
+function avoidBlocks(start,mins,blocks){let s=start;for(let g=0;g<30;g++){let moved=false;for(const[a,b]of blocks){if(s<b&&s+mins>a){s=b;moved=true;break}}if(!moved)break}return s}
+function travelArrival(clock,tr){const l=lunchRange();if(!l)return clock+tr;const[a,b]=l;if(clock>=a&&clock<b)clock=b;if(clock<a&&clock+tr>a)return b+tr;return clock+tr}
+function evaluateVisit(clock,tr,c,rule){const arrival=travelArrival(clock,tr),blocks=serviceBlocks(rule),endLimit=hm(state.settings.endTime)||1080,pref=parseRange(rule.preferred),fixed=hm(rule.fixed);let start,withinPref=true;if(fixed!=null){if(arrival>fixed)return{feasible:false,reason:'고정시간 '+rule.fixed+' 도착 불가'};start=fixed;for(const[a,b]of blocks)if(start<b&&start+c.mins>a)return{feasible:false,reason:'고정시간이 불가/점심시간과 겹침'};if(start+c.mins>endLimit)return{feasible:false,reason:'센터 복귀 마감 전 처리 불가'}}else{start=avoidBlocks(arrival,c.mins,blocks);if(pref&&start<pref[0]){const p=avoidBlocks(pref[0],c.mins,blocks);if(p+c.mins<=pref[1])start=p}withinPref=!pref||(start>=pref[0]&&start+c.mins<=pref[1]);if(start+c.mins>endLimit)return{feasible:false,reason:'운행 마감시간 이전 방문 불가'}}const wait=Math.max(0,start-arrival),miss=pref&&!withinPref;return{feasible:true,arrival,start,wait,withinPref,miss,ready:start+c.mins+Number(state.settings.bufferMins||0)}}
+async function getCachedCoord(address){return await idbGet('coords',address).catch(()=>null)}async function cacheCoord(address,coord){await idbPut('coords',address,coord).catch(()=>{})}
+async function geocode(address,key){const cached=await getCachedCoord(address);if(cached)return cached;const qs=new URLSearchParams({version:'1',format:'json',coordType:'WGS84GEO',fullAddr:address,addressFlag:'F00',page:'1',count:'20',appKey:key});const r=await fetch('https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?'+qs);const j=await r.json();if(!r.ok||j.error)throw new Error('주소 확인 실패');const arr=j?.coordinateInfo?.coordinate||[],f=Array.isArray(arr)?arr[0]:arr;const lon=Number(f?.newLon??f?.lon),lat=Number(f?.newLat??f?.lat);if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('좌표를 찾지 못함');const coord={lon,lat,address};await cacheCoord(address,coord);return coord}
+async function validateAddress(id){readRowsIntoState();pullSettings();const c=state.clients.find(x=>x.id===id),el=$('st_'+id);if(!c||!el)return;if(!c.address){el.textContent='주소 없음';el.className='addrstatus bad';return}if(!state.settings.appKey){el.textContent='키 필요';el.className='addrstatus wait';return}el.textContent='확인중';el.className='addrstatus wait';try{c.coord=await geocode(c.address,state.settings.appKey);el.textContent='✓ 확인';el.className='addrstatus ok'}catch(e){el.textContent='확인 필요';el.className='addrstatus bad'}}
+const legMemo=new Map();async function routeLeg(from,to,key,needPath=false){const k=`${from.lon},${from.lat}>${to.lon},${to.lat}`;if(legMemo.has(k)&&(!needPath||legMemo.get(k).path))return legMemo.get(k);const qs=new URLSearchParams({version:'1',format:'json',startX:String(from.lon),startY:String(from.lat),endX:String(to.lon),endY:String(to.lat),reqCoordType:'WGS84GEO',resCoordType:'WGS84GEO',searchOption:'0',startName:'출발',endName:'도착'});const r=await fetch('https://apis.openapi.sk.com/tmap/routes?'+qs,{headers:{appKey:key}});const j=await r.json();if(!r.ok||j.error)throw new Error('TMAP 자동차 이동시간 계산 실패');let sec=0,path=[];if(Array.isArray(j.features))for(const f of j.features){const t=Number(f?.properties?.totalTime);if(t>0)sec=t;const g=f?.geometry;if(g?.type==='LineString')for(const p of g.coordinates||[])path.push({lon:Number(p[0]),lat:Number(p[1])});if(g?.type==='MultiLineString')for(const line of g.coordinates||[])for(const p of line)path.push({lon:Number(p[0]),lat:Number(p[1])})}if(!sec)throw new Error('TMAP 이동시간 응답 오류');const out={mins:Math.max(1,Math.round(sec/60)),path};legMemo.set(k,out);return out}
+async function mapLimit(items,limit,fn){let idx=0;const out=new Array(items.length);async function worker(){while(true){const i=idx++;if(i>=items.length)return;out[i]=await fn(items[i],i)}}await Promise.all(Array.from({length:Math.min(limit,items.length)},worker));return out}
+async function buildMatrix(nodes,key){const pairs=[];for(const a of nodes)for(const b of nodes)if(a.id!==b.id)pairs.push([a,b]);let done=0;const matrix={};for(const n of nodes)matrix[n.id]={};await mapLimit(pairs,5,async([a,b])=>{const leg=await routeLeg(a.coord,b.coord,key,false);matrix[a.id][b.id]=leg.mins;done++;if(done%5===0||done===pairs.length)progress(`실제 도로 이동시간 계산 중 ${done}/${pairs.length}`)});return matrix}
+function ruleFor(c){return c.dayRules[selectedDay]||blankRule()}
+function activeCandidates(planDate){const ok=[],excluded=[];for(const c of state.clients){const r=ruleFor(c);if(!r.enabled)continue;if(c.paused){excluded.push({client:c,reason:'전체 일시중지'});continue}if(r.paused){excluded.push({client:c,reason:selectedDay+'요일 일시중지'});continue}if(planDate&&(c.skipDates||[]).includes(planDate)){excluded.push({client:c,reason:planDate+' 일시제외'});continue}ok.push(c)}return{ok,excluded}}
+function futureFixedImpossible(newClock,newLoc,remaining,matrix){for(const c of remaining){const r=ruleFor(c),f=hm(r.fixed);if(f==null)continue;const tr=matrix[newLoc.id]?.[c.id];if(tr==null)continue;const arr=travelArrival(newClock,tr);if(arr>f)return true}return false}
+function stateRank(a,b){if(a.order.length!==b.order.length)return b.order.length-a.order.length;if(a.miss!==b.miss)return a.miss-b.miss;return a.cost-b.cost}
+function optimizeSchedule(center,clients,matrix){const start=hm(state.settings.startTime)||540,endLimit=hm(state.settings.endTime)||1080,beamWidth=320;let beam=[{order:[],remaining:clients,clock:start,loc:center,travel:0,wait:0,miss:0,cost:0,visits:[]}],all=[...beam];for(let depth=0;depth<clients.length;depth++){const next=[];for(const st of beam){for(const c of st.remaining){const tr=matrix[st.loc.id][c.id],ev=evaluateVisit(st.clock,tr,c,ruleFor(c));if(!ev.feasible)continue;const rem=st.remaining.filter(x=>x.id!==c.id);if(futureFixedImpossible(ev.ready,c,rem,matrix))continue;const prefPenalty=ev.miss?220:0,waitPenalty=ev.wait*.25,travelPenalty=tr;next.push({order:[...st.order,c],remaining:rem,clock:ev.ready,loc:c,travel:st.travel+tr,wait:st.wait+ev.wait,miss:st.miss+(ev.miss?1:0),cost:st.cost+travelPenalty+waitPenalty+prefPenalty,visits:[...st.visits,{client:c,travel:tr,...ev}]})}}if(!next.length)break;next.sort(stateRank);beam=next.slice(0,beamWidth);all.push(...beam)}let best=null;for(const st of all){const back=matrix[st.loc.id]?.[center.id]??0,end=travelArrival(st.clock,back);if(end>endLimit)continue;const candidate={...st,back,end,totalTravel:st.travel+back};if(!best||candidate.order.length>best.order.length||(candidate.order.length===best.order.length&&(candidate.miss<best.miss||(candidate.miss===best.miss&&candidate.cost+back<best.cost+best.back))))best=candidate}if(!best)best={...beam.sort(stateRank)[0],back:0,end:start,totalTravel:0};const unassigned=[];for(const c of clients.filter(x=>!best.order.some(y=>y.id===x.id))){const tr=matrix[best.loc.id]?.[c.id]??0,ev=evaluateVisit(best.clock,tr,c,ruleFor(c));unassigned.push({client:c,reason:ev.reason||'다른 고정시간/마감시간과 함께 배치하기 어려움'})}return{best,unassigned}}
+async function recalcFixedOrder(order,center,matrix){let clock=hm(state.settings.startTime)||540,loc=center,totalTravel=0,visits=[],unassigned=[];for(const c of order){const tr=matrix[loc.id][c.id],ev=evaluateVisit(clock,tr,c,ruleFor(c));if(!ev.feasible){unassigned.push({client:c,reason:ev.reason});continue}visits.push({client:c,travel:tr,...ev});totalTravel+=tr;clock=ev.ready;loc=c}const back=matrix[loc.id][center.id]||0,end=travelArrival(clock,back);totalTravel+=back;if(end>(hm(state.settings.endTime)||1080))unassigned.push({client:{name:'센터 복귀'},reason:'설정한 복귀시간을 초과함'});return{order:visits.map(v=>v.client),visits,loc,back,end,totalTravel,miss:visits.filter(v=>v.miss).length,unassigned}}
+function buildPlanResult(center,opt,preExcluded,invalid){const b=opt.best;const stops=[{center:true,name:'센터 출발',address:state.settings.centerAddress,time:hm(state.settings.startTime)||540,coord:center.coord}];for(const v of b.visits)stops.push({center:false,id:v.client.id,name:v.client.name,address:v.client.address,mins:v.client.mins,time:v.start,travel:v.travel,wait:v.wait,preferred:ruleFor(v.client).preferred,fixed:ruleFor(v.client).fixed,blocked:ruleFor(v.client).blocked,withinPref:v.withinPref,coord:v.client.coord});stops.push({center:true,name:'센터 복귀',address:state.settings.centerAddress,time:b.end,travel:b.back,coord:center.coord});return{date:$('planDate').value,day:selectedDay,stops,order:b.order.map(c=>c.id),summary:{cases:b.order.length,service:b.order.reduce((a,c)=>a+c.mins,0),travel:b.totalTravel,end:b.end},unassigned:[...preExcluded,...invalid,...opt.unassigned],createdAt:new Date().toISOString()}}
+function renderPlan(plan){currentPlan=plan;let h='';plan.stops.forEach((s,i)=>{if(i>0)h+=`<div class="leg">↓ 이동 <strong>${s.travel||0}분</strong>${s.wait?` · 대기 ${s.wait}분`:''}</div>`;const clientIndex=!s.center?plan.order.indexOf(s.id):-1;h+=`<div class="stop"><div class="clock">${hmText(s.time)}</div><div class="track"><span class="dot"></span><span class="line"></span></div><div class="stopbody ${s.center?'':'draggable'}" ${s.center?'':`draggable="true" data-client-id="${s.id}"`}><div class="stophead"><div class="name">${s.center?'':(clientIndex+1)+'. '}${esc(s.name)}</div>${s.center?'':`<div><button class="mini moveup" data-id="${s.id}">↑</button><button class="mini movedown" data-id="${s.id}">↓</button></div>`}</div><div class="addr">${esc(s.address)}</div><div class="tags">${s.center?'<span class="tag center">센터</span>':`<span class="tag ${s.mins===40?'t40':'t60'}">${s.mins}분</span>`}${s.travel?`<span class="tag move">이동 ${s.travel}분</span>`:''}${s.fixed?`<span class="tag fixed">고정 ${esc(s.fixed)}</span>`:''}${s.preferred?`<span class="tag pref">희망 ${esc(s.preferred)}</span>`:''}${s.preferred&&!s.withinPref?'<span class="tag miss">희망시간 벗어남</span>':''}${s.blocked?`<span class="tag blocked">불가 ${esc(s.blocked)}</span>`:''}${s.wait?`<span class="tag waittag">대기 ${s.wait}분</span>`:''}${!s.center&&Number(state.settings.bufferMins)>0?`<span class="tag buffer">정리 ${state.settings.bufferMins}분</span>`:''}</div></div></div>`});$('route').className='route';$('route').innerHTML=h;$('sumCases').textContent=plan.summary.cases+'건';$('sumService').textContent=plan.summary.service+'분';$('sumTravel').textContent=plan.summary.travel+'분';$('sumEnd').textContent=hmText(plan.summary.end);$('routeTitle').textContent=(plan.date?plan.date+' ':'')+plan.day+'요일 시간별 동선';renderUnassigned(plan.unassigned);bindRouteReorder();drawMap(plan).catch(e=>{console.warn(e);$('map').textContent='지도 표시 실패: '+e.message})}
+function renderUnassigned(items){if(!items?.length){$('unassigned').style.display='none';return}$('unassigned').style.display='block';$('unassignedTitle').textContent='미배정 / 제외 '+items.length+'명';$('unassignedList').innerHTML=items.map(x=>`<div class="unassigned-item"><b>${esc(x.client.name||'이름없음')}</b> · ${esc(x.reason)}</div>`).join('')}
+function bindRouteReorder(){document.querySelectorAll('.moveup').forEach(b=>b.onclick=()=>moveClient(b.dataset.id,-1));document.querySelectorAll('.movedown').forEach(b=>b.onclick=()=>moveClient(b.dataset.id,1));let dragId=null;document.querySelectorAll('.stopbody.draggable').forEach(el=>{el.addEventListener('dragstart',()=>{dragId=el.dataset.clientId;el.classList.add('dragging')});el.addEventListener('dragend',()=>el.classList.remove('dragging'));el.addEventListener('dragover',e=>e.preventDefault());el.addEventListener('drop',e=>{e.preventDefault();const target=el.dataset.clientId;if(dragId&&target&&dragId!==target)dragMove(dragId,target)})})}
+async function moveClient(id,delta){if(!currentPlan)return;const order=[...currentPlan.order],i=order.indexOf(id),j=i+delta;if(i<0||j<0||j>=order.length)return;[order[i],order[j]]=[order[j],order[i]];await rerunManual(order)}function dragMove(a,b){const order=[...currentPlan.order],i=order.indexOf(a),j=order.indexOf(b);if(i<0||j<0)return;order.splice(i,1);order.splice(j,0,a);rerunManual(order)}
+async function rerunManual(orderIds){hideError();const clients=orderIds.map(id=>state.clients.find(c=>c.id===id)).filter(Boolean);if(!clients.length)return;try{progress('수동 순서 기준 시간 다시 계산 중...');const center={id:'center',coord:await geocode(state.settings.centerAddress,state.settings.appKey)};if(!lastMatrix){const nodes=[center,...clients];for(const c of clients)c.coord=await geocode(c.address,state.settings.appKey);lastMatrix=await buildMatrix(nodes,state.settings.appKey)}const m=await recalcFixedOrder(clients,center,lastMatrix);const kept=(currentPlan?.unassigned||[]).filter(x=>!clients.some(c=>c.id===x.client?.id));const opt={best:{...m,order:m.order,visits:m.visits,back:m.back,end:m.end,totalTravel:m.totalTravel},unassigned:[...kept,...m.unassigned]};const plan=buildPlanResult(center,opt,[],[]);renderPlan(plan);showInfo('수동 순서대로 이동시간과 일정 제약을 다시 계산했습니다.')}catch(e){showError(e.message||'수동 순서 계산 실패')}finally{progress('')}}
+function nextDateForDay(day){const map={'일':0,'월':1,'화':2,'수':3,'목':4,'금':5,'토':6},target=map[day],base=$('planDate').value?new Date($('planDate').value+'T12:00:00'):new Date();for(let i=0;i<7;i++){const d=new Date(base);d.setDate(base.getDate()+i);if(d.getDay()===target)return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return todayISO()}
+function initDays(){for(const d of WEEK){const b=document.createElement('button');b.className='daybtn'+(d==='월'?' active':'');b.textContent=d;b.onclick=()=>{selectedDay=d;[...$('days').children].forEach(x=>x.classList.remove('active'));b.classList.add('active');$('make').textContent=d+'요일 동선 최적화';$('routeTitle').textContent=d+'요일 시간별 동선';$('planDate').value=nextDateForDay(d);queueSave()};$('days').appendChild(b)}}
+$('make').onclick=async()=>{hideError();progress('');legMemo.clear();lastMatrix=null;await saveState();if(!state.settings.appKey){showError('TMAP AppKey를 입력해야 합니다.');return}const planDate=$('planDate').value;const {ok:baseClients,excluded}=activeCandidates(planDate);if(!baseClients.length){showError(selectedDay+'요일 방문 가능한 어르신이 없습니다.');return}$('make').disabled=true;$('make').textContent='계산 중...';try{progress('센터와 어르신 주소 확인 중...');const centerCoord=await geocode(state.settings.centerAddress,state.settings.appKey);const center={id:'center',name:'센터',coord:centerCoord};const valid=[],invalid=[];for(const c of baseClients){const st=$('st_'+c.id);try{c.coord=await geocode(c.address,state.settings.appKey);valid.push(c);if(st){st.textContent='✓ 확인';st.className='addrstatus ok'}}catch(e){invalid.push({client:c,reason:'주소 확인 실패'});if(st){st.textContent='확인 필요';st.className='addrstatus bad'}}}if(!valid.length)throw new Error('사용 가능한 주소가 없습니다.');progress('전체 이동 조합의 실제 도로시간을 계산하고 있습니다...');const nodes=[center,...valid];lastMatrix=await buildMatrix(nodes,state.settings.appKey);progress('고정/희망/불가시간을 포함해 하루 동선 후보를 비교 중...');const opt=optimizeSchedule(center,valid,lastMatrix);const plan=buildPlanResult(center,opt,excluded,invalid);renderPlan(plan);$('tmapPill').textContent='TMAP 연결 정상';$('tmapPill').className='pill ok';showInfo('도로 이동시간과 일정 제약을 함께 반영해 동선을 만들었습니다.')}catch(e){console.error(e);$('tmapPill').textContent='TMAP 확인 필요';$('tmapPill').className='pill bad';showError(e.message||'동선을 만들지 못했습니다.')}finally{$('make').disabled=false;$('make').textContent=selectedDay+'요일 동선 최적화';progress('')}};
+async function loadTmapSdk(key){if(window.Tmapv2)return;if(tmapSdkPromise)return tmapSdkPromise;tmapSdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey='+encodeURIComponent(key);s.onload=()=>resolve();s.onerror=()=>reject(new Error('TMAP 지도 SDK 로드 실패'));document.head.appendChild(s)});return tmapSdkPromise}
+function markerSvg(n){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="42"><path d="M17 1C8.2 1 1 8.2 1 17c0 11.5 16 24 16 24s16-12.5 16-24C33 8.2 25.8 1 17 1z" fill="#2563eb" stroke="white" stroke-width="2"/><circle cx="17" cy="16" r="10" fill="white"/><text x="17" y="20" text-anchor="middle" font-family="Arial" font-size="12" font-weight="700" fill="#2563eb">${n}</text></svg>`;return'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg)}
+async function drawMap(plan){if(!state.settings.appKey)return;await loadTmapSdk(state.settings.appKey);$('map').innerHTML='';for(const o of mapObjects){try{o.setMap(null)}catch(e){}}mapObjects=[];const coords=plan.stops.map(s=>s.coord).filter(Boolean);if(!coords.length)return;const avg={lat:coords.reduce((a,c)=>a+c.lat,0)/coords.length,lon:coords.reduce((a,c)=>a+c.lon,0)/coords.length};mapInstance=new Tmapv2.Map('map',{center:new Tmapv2.LatLng(avg.lat,avg.lon),width:'100%',height:'265px',zoom:12,zoomControl:true,scrollwheel:true});let visitNo=0;for(const s of plan.stops){if(!s.coord)continue;const n=s.center?(s.name.includes('출발')?'S':'E'):String(++visitNo);let marker;try{marker=new Tmapv2.Marker({position:new Tmapv2.LatLng(s.coord.lat,s.coord.lon),icon:markerSvg(n),iconSize:new Tmapv2.Size(34,42),map:mapInstance,title:s.name})}catch(e){marker=new Tmapv2.Marker({position:new Tmapv2.LatLng(s.coord.lat,s.coord.lon),map:mapInstance,title:s.name})}mapObjects.push(marker)}for(let i=0;i<plan.stops.length-1;i++){const a=plan.stops[i],b=plan.stops[i+1];if(!a.coord||!b.coord)continue;const leg=await routeLeg(a.coord,b.coord,state.settings.appKey,true);if(leg.path.length){const path=leg.path.map(p=>new Tmapv2.LatLng(p.lat,p.lon));const line=new Tmapv2.Polyline({path,strokeColor:'#2563eb',strokeWeight:5,map:mapInstance});mapObjects.push(line)}}try{const bounds=new Tmapv2.LatLngBounds();for(const c of coords)bounds.extend(new Tmapv2.LatLng(c.lat,c.lon));mapInstance.fitBounds(bounds)}catch(e){}}
+$('savePlan').onclick=async()=>{if(!currentPlan){showError('먼저 동선을 만들어주세요.');return}const saved=JSON.parse(JSON.stringify(currentPlan));saved.historyId=uid();saved.savedAt=new Date().toISOString();state.history=[saved,...(state.history||[])].slice(0,40);await saveState();showInfo('현재 동선을 저장했습니다.')};$('printPlan').onclick=()=>{if(!currentPlan){showError('먼저 동선을 만들어주세요.');return}window.print()};
+function renderHistory(){const sel=$('historySelect'),cur=sel?.value||'';if(!sel)return;sel.innerHTML='<option value="">저장된 동선 불러오기</option>';for(const h of state.history||[]){const o=document.createElement('option');o.value=h.historyId;o.textContent=`${h.date||''} ${h.day||''} · ${h.summary?.cases||0}건 · 저장 ${new Date(h.savedAt).toLocaleString('ko-KR')}`;sel.appendChild(o)}sel.value=cur}
+$('loadHistory').onclick=()=>{const id=$('historySelect').value;if(!id)return;const h=(state.history||[]).find(x=>x.historyId===id);if(h){selectedDay=h.day||selectedDay;$('planDate').value=h.date||$('planDate').value;[...$('days').children].forEach(x=>x.classList.toggle('active',x.textContent===selectedDay));$('make').textContent=selectedDay+'요일 동선 최적화';renderPlan(JSON.parse(JSON.stringify(h)));showInfo('저장된 동선을 불러왔습니다.')}};
+async function readHandleFile(h){const f=await h.getFile();return normalizeState(JSON.parse(await f.text()))}async function writeHandleFile(h,s){const w=await h.createWritable();await w.write(JSON.stringify(s,null,2));await w.close()}async function handlePerm(h,request=false){try{let p=await h.queryPermission({mode:'readwrite'});if(request&&p!=='granted')p=await h.requestPermission({mode:'readwrite'});return p}catch(e){return'denied'}}
+async function syncBackupLoad(){backupHandle=await idbGet('handles','main').catch(()=>null);if(!backupHandle)return;const p=await handlePerm(backupHandle);if(p!=='granted'){$('backupPill').textContent='백업 재연결 필요';$('backupPill').className='pill warn';return}const fs=await readHandleFile(backupHandle).catch(()=>null);if(fs&&hasMeaningfulData(fs)){const ft=Date.parse(fs.updatedAt||0)||0,bt=Date.parse(state.updatedAt||0)||0;if(!hasMeaningfulData(state)||ft>bt){state=fs;await idbPut('state','main',state);renderState();showInfo('PC 백업 파일의 최신 데이터를 복구했습니다.')}else if(bt>ft)await writeHandleFile(backupHandle,state)}else if(hasMeaningfulData(state))await writeHandleFile(backupHandle,state);$('backupPill').textContent='PC 백업 연결됨';$('backupPill').className='pill ok'}
+function queueFileWrite(){if(!backupHandle||!hasMeaningfulData(state))return;clearTimeout(fileTimer);fileTimer=setTimeout(async()=>{if(await handlePerm(backupHandle)!=='granted'){$('backupPill').textContent='백업 재연결 필요';$('backupPill').className='pill warn';return}try{await writeHandleFile(backupHandle,state);$('backupPill').textContent='PC 백업 '+now();$('backupPill').className='pill ok'}catch(e){$('backupPill').textContent='백업 실패';$('backupPill').className='pill bad'}},500)}
+$('connectBackup').onclick=async()=>{hideError();if(!('showSaveFilePicker'in window)){showError('PC 자동백업은 최신 Chrome 또는 Edge에서 사용할 수 있습니다.');return}try{if(backupHandle&&await handlePerm(backupHandle,true)==='granted'){await writeHandleFile(backupHandle,state);$('backupPill').textContent='PC 백업 연결됨';$('backupPill').className='pill ok';showInfo('기존 PC 백업 파일 연결을 확인했습니다.');return}backupHandle=await showSaveFilePicker({suggestedName:'조은_방문목욕_동선데이터.json',startIn:'documents',types:[{description:'JSON 백업 파일',accept:{'application/json':['.json']}}]});await idbPut('handles','main',backupHandle);if(hasMeaningfulData(state))await writeHandleFile(backupHandle,state);$('backupPill').textContent='PC 백업 연결됨';$('backupPill').className='pill ok';showInfo('PC 백업 파일을 연결했습니다.')}catch(e){if(e.name!=='AbortError')showError('백업 연결 실패: '+e.message)}};
+$('restoreBackup').onclick=async()=>{hideError();if(!('showOpenFilePicker'in window)){showError('최신 Chrome 또는 Edge에서 백업 파일을 직접 불러올 수 있습니다.');return}try{const[h]=await showOpenFilePicker({startIn:'documents',types:[{description:'JSON 백업 파일',accept:{'application/json':['.json']}}]});const restored=await readHandleFile(h);if(!hasMeaningfulData(restored)&&!confirm('백업 파일에 입력 데이터가 거의 없습니다. 그래도 불러올까요?'))return;state=restored;backupHandle=h;await idbPut('handles','main',h);await idbPut('state','main',state);renderState();$('backupPill').textContent='PC 백업 연결됨';$('backupPill').className='pill ok';showInfo('백업 파일에서 복구했습니다.')}catch(e){if(e.name!=='AbortError')showError('백업 복구 실패: '+e.message)}};
+$('downloadBackup').onclick=()=>{readRowsIntoState();pullSettings();const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='조은_방문목욕_동선데이터_백업.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),700)};
+async function init(){initDays();try{db=await dbOpen();state=await loadInitialState();renderState();await idbPut('state','main',state);$('dbPill').textContent='브라우저 저장';$('dbPill').className='pill ok';const day=WEEK_JS[new Date(($('planDate').value||todayISO())+'T12:00:00').getDay()];if(day){selectedDay=day;[...$('days').children].forEach(x=>x.classList.toggle('active',x.textContent===day));$('make').textContent=day+'요일 동선 최적화';$('routeTitle').textContent=day+'요일 시간별 동선'}await syncBackupLoad()}catch(e){console.error(e);state=normalizeState(blankState());renderState();$('dbPill').textContent='저장 확인 필요';$('dbPill').className='pill bad'}}init();
 </script>
-</body>
-</html>
+</body></html>
