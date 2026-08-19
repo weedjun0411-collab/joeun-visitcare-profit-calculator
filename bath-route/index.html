@@ -82,14 +82,22 @@ async function validateAddress(id){readRowsIntoState();pullSettings();const c=st
 const legMemo=new Map();async function routeLeg(from,to,key,needPath=false){
   const k=`${from.lon},${from.lat}>${to.lon},${to.lat}`;
   if(legMemo.has(k)&&(!needPath||legMemo.get(k).path))return legMemo.get(k);
+  const dx=Math.abs(Number(from.lon)-Number(to.lon)),dy=Math.abs(Number(from.lat)-Number(to.lat));
+  if(dx<0.00002&&dy<0.00002){const out={mins:0,path:[]};legMemo.set(k,out);return out}
   const body={startX:String(from.lon),startY:String(from.lat),endX:String(to.lon),endY:String(to.lat),reqCoordType:'WGS84GEO',resCoordType:'WGS84GEO',searchOption:'0',startName:'출발',endName:'도착'};
   const r=await fetch('https://apis.openapi.sk.com/tmap/routes?version=1&format=json',{method:'POST',headers:{'Content-Type':'application/json','appKey':key},body:JSON.stringify(body)});
   const raw=await r.text();let j=null;try{j=raw?JSON.parse(raw):null}catch(e){}
   const apiMsg=j?.error?.message||j?.errorMessage||j?.message||'';
   if(!r.ok||j?.error)throw new Error('TMAP 경로 API 오류'+(apiMsg?': '+apiMsg:' (HTTP '+r.status+')'));
-  let sec=Number(j?.features?.[0]?.properties?.totalTime)||0,path=[];
-  if(Array.isArray(j?.features))for(const f of j.features){const t=Number(f?.properties?.totalTime);if(t>sec)sec=t;const g=f?.geometry;if(g?.type==='LineString')for(const p of g.coordinates||[])path.push({lon:Number(p[0]),lat:Number(p[1])});if(g?.type==='MultiLineString')for(const line of g.coordinates||[])for(const p of line)path.push({lon:Number(p[0]),lat:Number(p[1])})}
-  if(!sec){const detail=apiMsg||(raw&&raw.length<300?raw:'응답에 totalTime이 없음');throw new Error('TMAP 이동시간 응답 오류: '+detail)}
+  const features=Array.isArray(j?.features)?j.features:[];
+  let sec=Number(features?.[0]?.properties?.totalTime)||0,path=[],segmentSec=0;
+  for(const f of features){
+    const total=Number(f?.properties?.totalTime);if(total>sec)sec=total;
+    const seg=Number(f?.properties?.time);if(seg>0)segmentSec+=seg;
+    const g=f?.geometry;if(g?.type==='LineString')for(const p of g.coordinates||[])path.push({lon:Number(p[0]),lat:Number(p[1])});if(g?.type==='MultiLineString')for(const line of g.coordinates||[])for(const p of line)path.push({lon:Number(p[0]),lat:Number(p[1])})
+  }
+  if(!sec&&segmentSec>0)sec=segmentSec;
+  if(!sec){const detail=apiMsg||(raw&&raw.length<500?raw:'TMAP 응답에 이동시간 정보가 없음');throw new Error('TMAP 이동시간 응답 오류: '+detail)}
   const out={mins:Math.max(1,Math.round(sec/60)),path};legMemo.set(k,out);return out
 }
 async function mapLimit(items,limit,fn){let idx=0;const out=new Array(items.length);async function worker(){while(true){const i=idx++;if(i>=items.length)return;out[i]=await fn(items[i],i)}}await Promise.all(Array.from({length:Math.min(limit,items.length)},worker));return out}
